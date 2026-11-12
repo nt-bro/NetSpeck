@@ -1,0 +1,22 @@
+# Generated binaries, reports and release packages
+/TaskbarNet.exe
+/build/
+/dist/
+*.pdb
+*.dll
+*.exe
+*.zip
+*.sha256
+
+# Local preferences, diagnostic data and credentials
+settings.ini
+settings.ini.tmp
+*.log
+*.csv
+.env
+.env.*
+*.user
+.vs/
+.idea/
+Thumbs.db
+Desktop.ini

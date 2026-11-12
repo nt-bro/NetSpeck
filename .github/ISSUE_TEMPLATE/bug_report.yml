@@ -1,0 +1,36 @@
+name: Bug report / Ошибка
+description: Report a reproducible issue with the Windows 11 preview.
+body:
+  - type: input
+    id: windows-build
+    attributes:
+      label: Windows version and build / Сборка Windows
+      description: Use winver. Do not include a product key or personal account details.
+      placeholder: Windows 11 26H2, 26300.9974, x64
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: TaskbarNet version
+      placeholder: 1.6.0 preview
+    validations:
+      required: true
+  - type: input
+    id: layout
+    attributes:
+      label: Display scale and taskbar layout / Масштаб и панель задач
+      placeholder: 150%, primary monitor, left-aligned icons, standard taskbar
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps and expected behavior / Шаги и ожидаемое поведение
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened / Что произошло
+      description: Review screenshots/logs before attaching. Remove personal paths, adapter identifiers and tokens.
+    validations:
+      required: true
