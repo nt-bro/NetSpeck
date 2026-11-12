@@ -12,6 +12,12 @@ Windows 11 x64 · .NET Framework 4.8 · Portable · MIT
 
 *Actual screenshot with live network traffic.*
 
+**The background graph is optional and can be completely disabled.** Right-click the indicator and clear **Background graph**, or uncheck it in **Settings → Graph**. Speed numbers remain visible without the graph.
+
+![Indicator with the background graph disabled](docs/images/indicator-no-graph.png)
+
+*Graph disabled: example drawn by the app with sample values.*
+
 ## Status and compatibility
 
 **Public preview.** Verified on Windows 11 26H2 **26300.9974**, with the standard taskbar on the primary monitor. Other Windows 11 builds are unverified; Windows 10 is unsupported.
