@@ -1,31 +1,59 @@
-# NetSpeck 1.6.1 — Windows 11 public preview
+<div align="center">
+  <p><strong>Live download &amp; upload speed in your Windows 11 taskbar.</strong></p>
+  <p><img src="https://raw.githubusercontent.com/nt-bro/NetSpeck/v1.6.1/docs/images/indicator.png" width="264" height="88" alt="NetSpeck panel preview"></p>
+  <p><sub>App-rendered preview · sample traffic</sub></p>
+  <p>
+    <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.6.1/NetSpeck-v1.6.1-win-x64.zip"><strong>⬇️ Download NetSpeck 1.6.1 · ZIP</strong></a>
+    &nbsp; · &nbsp; <a href="https://github.com/nt-bro/NetSpeck/blob/main/README.ru.md">🇷🇺 Описание на русском</a>
+  </p>
+</div>
 
-Current download/upload speed inside the standard Windows 11 taskbar, with Russian and English UI.
+## 🚀 Get started
 
-![NetSpeck in the Windows 11 taskbar — actual screenshot](https://raw.githubusercontent.com/nt-bro/NetSpeck/v1.6.1/docs/images/taskbar-live.png)
+1. Download **NetSpeck-v1.6.1-win-x64.zip** from the assets below.
+2. Extract it and run **NetSpeck.exe**. No installation or administrator rights are required.
+3. Right-click the indicator or its tray icon to customize it.
 
-## Download
+The attached **.sha256** file contains the ZIP checksum. GitHub's automatic **Source code** archives are for building the app yourself.
 
-Download **NetSpeck-v1.6.1-win-x64.zip**, extract it and run **NetSpeck.exe**. No installation or administrator rights are required. **Source code** archives are for building the app yourself. A SHA-256 checksum is attached as a separate file.
+## ✨ Highlights
 
-Features include independent number averaging and graph smoothing, an optional configurable background graph, left-edge width resizing, font and icon imports, optional startup, and explanatory tooltips. Two built-in icons are provided: Flows and Speedometer.
+- 🎚️ **Independent smoothing:** number averaging and graph smoothing have separate controls.
+- 📈 **A graph you can tune:** history, frame rate, colors, opacity, scale, line width, fill and a 10% fade at each end.
+- 🔤 **Your own look:** drag the left edge to adjust width, choose fonts and import your own fonts or ICO/PNG icons. Flows and Speedometer icons are included.
+- 🌐 **Russian & English:** automatic Windows-language selection, manual switching and explanatory tooltips. Optional startup at sign-in.
 
-**The graph can be fully disabled** from the indicator's right-click menu or Settings → Graph; download/upload numbers remain visible.
+> [!TIP]
+> **The graph can be completely disabled** from the right-click menu or **Settings → Graph**. Download/upload numbers remain visible.
 
-![NetSpeck in the taskbar without a graph — actual screenshot](https://raw.githubusercontent.com/nt-bro/NetSpeck/main/docs/images/taskbar-no-graph-compact.png)
+## 🖼️ Real screenshots
 
-*Actual screenshot with the background graph disabled.*
+### With the background graph
 
-## Preview compatibility
+![NetSpeck with a background graph — actual screenshot](https://raw.githubusercontent.com/nt-bro/NetSpeck/v1.6.1/docs/images/taskbar-live.png)
 
-Verified only on **Windows 11 26H2 26300.9974 x64** with the standard primary horizontal taskbar. Other builds are unverified; Windows 10 is unsupported. Integration is unofficial and Windows updates may affect it. The EXE is unsigned.
+### Numbers only
 
-Sleep/resume remains unverified. Read [known issues](https://github.com/nt-bro/NetSpeck/blob/main/docs/KNOWN_ISSUES.md).
+![NetSpeck without a graph — actual screenshot with a compact layout](https://raw.githubusercontent.com/nt-bro/NetSpeck/main/docs/images/taskbar-no-graph-compact.png)
 
-The build passed 66 offline checks. Interactive development checks passed 112 behavior checks and 80 render cases. These results do not replace testing on your Windows build.
+## 🪟 Preview compatibility
 
-## По-русски
+Verified on **Windows 11 26H2 26300.9974 x64**, with the standard primary horizontal taskbar. Other Windows 11 builds are unverified; Windows 10 is unsupported. Taskbar integration is unofficial and Windows updates may affect it. The EXE is unsigned.
 
-Скачайте **NetSpeck-v1.6.1-win-x64.zip**, распакуйте и запустите **NetSpeck.exe**. Установка и права администратора не нужны. **Фоновый график можно полностью отключить через ПКМ по индикатору или «Настройки → График»**, оставив только числа скорости. Это **предварительный выпуск**: проверена только Windows 11 26H2 26300.9974 x64. Поддержка других сборок не подтверждена, Windows 10 не поддерживается. Восстановление после сна пока не проверено. Подробнее — в README и известных ограничениях.
+Sleep/resume remains unverified. See [known issues](https://github.com/nt-bro/NetSpeck/blob/main/docs/KNOWN_ISSUES.md) and the [full README](https://github.com/nt-bro/NetSpeck).
 
-MIT License. Copyright © 2026 nt-bro.
+## 🧪 Verification
+
+Development checks passed: **66 offline checks · 112 behavior checks · 80 render cases**. These results do not replace testing on your Windows build.
+
+## 🇷🇺 По-русски
+
+Скачайте **NetSpeck-v1.6.1-win-x64.zip**, распакуйте и запустите **NetSpeck.exe**. Установка и права администратора не нужны.
+
+**Фоновый график можно полностью отключить** через ПКМ по индикатору или **«Настройки → График»**, оставив только числа загрузки и отдачи. Усреднение чисел и сглаживание графика настраиваются отдельно; доступны свои шрифты, иконки и изменение ширины перетаскиванием.
+
+Это предварительный выпуск для Windows 11: проверена сборка **26H2 26300.9974 x64**. Подробнее о настройках, запуске и совместимости — в [русском README](https://github.com/nt-bro/NetSpeck/blob/main/README.ru.md).
+
+## 📄 License
+
+MIT · Copyright © 2026 nt-bro.

@@ -1,32 +1,25 @@
-<img src="icons/flows.svg" width="80" alt="NetSpeck icon">
+<div align="center">
+  <h1>NetSpeck</h1>
+  <p><strong>Live download &amp; upload speed. Right in your Windows 11 taskbar.</strong></p>
+  <p><img src="docs/images/indicator.png" width="264" height="88" alt="NetSpeck panel preview with download and upload speeds"></p>
+  <p><sub>App-rendered preview · sample traffic</sub></p>
+  <p>
+    <a href="https://github.com/nt-bro/NetSpeck/releases/tag/v1.6.1"><img src="https://img.shields.io/badge/preview-v1.6.1-38bdf8?style=flat-square" alt="Public preview v1.6.1"></a>
+    <img src="https://img.shields.io/badge/Windows-11%20x64-0078D4?style=flat-square" alt="Windows 11 x64">
+    <a href="https://github.com/nt-bro/NetSpeck/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/nt-bro/NetSpeck/build.yml?branch=main&amp;style=flat-square&amp;label=build" alt="Build status"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-34d399?style=flat-square" alt="MIT license"></a>
+  </p>
+  <p>
+    <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.6.1/NetSpeck-v1.6.1-win-x64.zip"><strong>⬇️ Download ZIP</strong></a>
+    &nbsp; · &nbsp; <a href="README.ru.md">🇷🇺 Русский</a>
+    &nbsp; · &nbsp; <a href="https://github.com/nt-bro/NetSpeck/issues/new/choose">🐞 Report a bug</a>
+  </p>
+  <p><sub>Portable · No administrator rights · Russian &amp; English · .NET Framework 4.8</sub></p>
+</div>
 
-# NetSpeck
+---
 
-**Current download and upload speed inside the standard Windows 11 taskbar.**
-
-[Русский](README.ru.md) · [Download](https://github.com/nt-bro/NetSpeck/releases) · [Report an issue](https://github.com/nt-bro/NetSpeck/issues)
-
-Windows 11 x64 · .NET Framework 4.8 · Portable · MIT
-
-![NetSpeck running inside the Windows 11 taskbar](docs/images/taskbar-live.png)
-
-*Actual screenshot with live network traffic.*
-
-**The background graph is optional and can be completely disabled.** Right-click the indicator and clear **Background graph**, or uncheck it in **Settings → Graph**. Speed numbers remain visible without the graph.
-
-![NetSpeck in the taskbar with the background graph disabled](docs/images/taskbar-no-graph-compact.png)
-
-*Actual screenshot with the background graph disabled.*
-
-## Status and compatibility
-
-**Public preview.** Verified on Windows 11 26H2 **26300.9974**, with the standard taskbar on the primary monitor. Other Windows 11 builds are unverified; Windows 10 is unsupported.
-
-Taskbar integration uses an unofficial native child-window technique. It does not patch Explorer, inject a DLL or require a taskbar replacement. Windows updates can affect compatibility.
-
-Sleep/resume has not been verified. Read [known issues](docs/KNOWN_ISSUES.md) before using the preview.
-
-## Download and run
+## 🚀 Download and run
 
 1. Open [Releases](https://github.com/nt-bro/NetSpeck/releases).
 2. Download `NetSpeck-v1.6.1-win-x64.zip` from the release assets. GitHub's automatic **Source code** archives contain source files, not the ready-to-run app.
@@ -35,18 +28,48 @@ Sleep/resume has not been verified. Read [known issues](docs/KNOWN_ISSUES.md) be
 
 Close the app before replacing its EXE during an update. If startup is enabled and you move the EXE, disable and re-enable startup to update the path.
 
-## Features
+## ✨ Make it yours
 
-- **Two speed values:** download ↓ and upload ↑, in decimal bytes or bits per second.
-- **Independent number averaging:** off or 2 / 3 / 5 / 10 seconds; number refresh every 0.5 / 1 / 2 seconds.
-- **Optional background graph:** 15–120 seconds of history, 5–30 fps, graph-only smoothing from 0–5 seconds, colors, opacity, line width, shared auto/fixed scale and optional fill. Both ends fade over 10%.
-- **Width by dragging:** enable **Resize panel width**, then drag the left edge. The right edge stays fixed. **Reset panel width** restores automatic sizing.
-- **Fonts:** installed families and styles, preview, private TTF/TTC/compatible OTF imports.
-- **Icons:** Flows and Speedometer, plus your own ICO/PNG files. Selection changes the tray and app-window icons.
-- **Russian and English:** automatic selection from the Windows display language or a saved manual choice; explanatory tooltips for settings and menus.
-- **Recovery:** recreates its indicator after Explorer recreates the taskbar. Can start when you sign in.
+| Feature | What you can adjust |
+| :--- | :--- |
+| ⬇️ **Download & upload** | Two speed values, in decimal bytes or bits per second. |
+| 🎚️ **Steadier numbers** | Independent averaging: off or 2 / 3 / 5 / 10 seconds. Number refresh: 0.5 / 1 / 2 seconds. |
+| 📈 **Optional graph** | 15–120 seconds of history, 5–30 fps, separate 0–5 second smoothing, colors, opacity, line width, scale and fill. A 10% fade softens each end. |
+| ↔️ **Panel width** | Enable **Resize panel width** and drag the left edge. The right edge stays fixed; **Reset panel width** restores automatic sizing. |
+| 🔤 **Fonts** | Installed families and styles, preview and private TTF/TTC/compatible OTF imports. |
+| 🎨 **Icons** | Flows, Speedometer or your own ICO/PNG files for the tray and app windows. |
+| 🌐 **Language** | Russian or English, selected automatically from Windows or chosen manually. Tooltips explain the settings. |
+| 🔄 **Startup & recovery** | Optional startup at sign-in and indicator recreation after Explorer recreates the taskbar. |
 
-## What the numbers mean
+> [!TIP]
+> **The background graph can be completely disabled.** Right-click the indicator and clear **Background graph**, or turn it off in **Settings → Graph**. Download/upload numbers remain visible.
+
+## 🖼️ In the taskbar
+
+Actual screenshots from Windows 11.
+
+### With the background graph
+
+<p align="center">
+  <img src="docs/images/taskbar-live.png" width="686" alt="Actual NetSpeck screenshot with the background graph enabled">
+</p>
+
+### Numbers only
+
+<p align="center">
+  <img src="docs/images/taskbar-no-graph-compact.png" width="534" alt="Actual NetSpeck screenshot without a graph, with the arrows close to the speed values">
+</p>
+
+## 🪟 Compatibility
+
+> [!NOTE]
+> **Public preview:** verified on Windows 11 26H2 **26300.9974 x64**, with the standard horizontal taskbar on the primary monitor. Other Windows 11 builds are unverified; Windows 10 is unsupported.
+
+Taskbar integration uses an unofficial native child-window technique. It does not patch Explorer, inject a DLL or require a taskbar replacement. Windows updates can affect compatibility.
+
+Sleep/resume has not been verified. See [known issues](docs/KNOWN_ISSUES.md) for the tested scenarios and remaining limitations.
+
+## 🔎 What the numbers mean
 
 NetSpeck reads local 64-bit interface byte counters. It does not download a test file or measure your plan's maximum speed. Values include any LAN traffic on the chosen adapter.
 
@@ -54,7 +77,7 @@ Automatic mode selects one adapter using the system internet route. VPN and phys
 
 Only the primary horizontal taskbar is supported. The app uses available space; it does not reserve an official taskbar slot. If no safe free space can be found, the indicator hides temporarily and reports why in the tray/settings.
 
-## Preferences and privacy
+## 🔒 Preferences and privacy
 
 Settings and a bounded local log are stored in `%LOCALAPPDATA%\NetSpeck`. Imported fonts and icons are copied into its `Fonts` and `Icons` folders. Imported assets are private to this app; system fonts are not bundled.
 
@@ -62,7 +85,7 @@ Upgrading from the development version: close the previous app before starting N
 
 There is no telemetry, analytics or automatic upload. Diagnostic exports may include adapter names and a taskbar screenshot; review them before sharing.
 
-## Build and test
+## 🛠️ Build from source
 
 Requires Windows x64 and its .NET Framework 4.8 compiler. No NuGet packages or .NET SDK are required.
 
@@ -76,6 +99,9 @@ This creates `NetSpeck.exe` and runs **66 offline checks**. Close any running co
 powershell -NoProfile -File .\scripts\package.ps1
 ```
 
+<details>
+<summary>🧪 Interactive checks</summary>
+
 Interactive checks require a compatible Windows 11 desktop and an active adapter:
 
 ```powershell
@@ -84,8 +110,12 @@ powershell -NoProfile -File .\build.ps1 -Integration -Menus
 
 These additionally check all four settings tabs in both languages, **80 render cases**, menu/settings behavior and icon imports. They temporarily alter and restore local app preferences. They do not trigger sleep or restart Explorer. CI runs only the build and offline checks; a successful CI build is not a compatibility test for its Windows Server runner.
 
-See [contributing](CONTRIBUTING.md), [release notes](CHANGELOG.md) and [known issues](docs/KNOWN_ISSUES.md).
+</details>
 
-## License
+## 🤝 Contributing
+
+Bug reports and focused pull requests are welcome. Start with [contributing](CONTRIBUTING.md), [release notes](CHANGELOG.md) and [known issues](docs/KNOWN_ISSUES.md).
+
+## 📄 License
 
 [MIT](LICENSE). Copyright © 2026 nt-bro.
