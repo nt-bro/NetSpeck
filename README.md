@@ -14,7 +14,7 @@ Windows 11 x64 · .NET Framework 4.8 · Portable · MIT
 
 **The background graph is optional and can be completely disabled.** Right-click the indicator and clear **Background graph**, or uncheck it in **Settings → Graph**. Speed numbers remain visible without the graph.
 
-![NetSpeck in the taskbar with the background graph disabled](docs/images/taskbar-no-graph.png)
+![NetSpeck in the taskbar with the background graph disabled](docs/images/taskbar-no-graph-compact.png)
 
 *Actual screenshot with the background graph disabled.*
 

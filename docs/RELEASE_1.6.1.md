@@ -12,7 +12,7 @@ Features include independent number averaging and graph smoothing, an optional c
 
 **The graph can be fully disabled** from the indicator's right-click menu or Settings → Graph; download/upload numbers remain visible.
 
-![NetSpeck in the taskbar without a graph — actual screenshot](https://raw.githubusercontent.com/nt-bro/NetSpeck/main/docs/images/taskbar-no-graph.png)
+![NetSpeck in the taskbar without a graph — actual screenshot](https://raw.githubusercontent.com/nt-bro/NetSpeck/main/docs/images/taskbar-no-graph-compact.png)
 
 *Actual screenshot with the background graph disabled.*
 
