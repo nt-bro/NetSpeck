@@ -2,6 +2,8 @@
 
 Current download/upload speed inside the standard Windows 11 taskbar, with Russian and English UI.
 
+![NetSpeck in the Windows 11 taskbar — actual screenshot](https://raw.githubusercontent.com/nt-bro/NetSpeck/v1.6.1/docs/images/taskbar-live.png)
+
 ## Download
 
 Download **NetSpeck-v1.6.1-win-x64.zip**, extract it and run **NetSpeck.exe**. No installation or administrator rights are required. **Source code** archives are for building the app yourself. A SHA-256 checksum is attached as a separate file.

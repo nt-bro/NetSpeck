@@ -8,9 +8,9 @@
 
 Windows 11 x64 · .NET Framework 4.8 · Portable · MIT
 
-![Rendered example of the taskbar indicator](docs/images/indicator.png)
+![NetSpeck running inside the Windows 11 taskbar](docs/images/taskbar-live.png)
 
-*Example rendered by the app with simulated traffic.*
+*Actual screenshot with live network traffic.*
 
 ## Status and compatibility
 
