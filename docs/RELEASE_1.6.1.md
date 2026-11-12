@@ -4,7 +4,7 @@
   <p><sub>App-rendered preview · sample traffic</sub></p>
   <p>
     <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.6.1/NetSpeck-v1.6.1-win-x64.zip"><strong>⬇️ Download NetSpeck 1.6.1 · ZIP</strong></a>
-    &nbsp; · &nbsp; <a href="https://github.com/nt-bro/NetSpeck/blob/main/README.ru.md">🇷🇺 Описание на русском</a>
+    &nbsp; · &nbsp; <a href="https://github.com/nt-bro/NetSpeck/blob/main/README.ru.md">🌐 Описание на русском</a>
   </p>
 </div>
 
@@ -46,7 +46,7 @@ Sleep/resume remains unverified. See [known issues](https://github.com/nt-bro/Ne
 
 Development checks passed: **66 offline checks · 112 behavior checks · 80 render cases**. These results do not replace testing on your Windows build.
 
-## 🇷🇺 По-русски
+## 🌐 По-русски
 
 Скачайте **NetSpeck-v1.6.1-win-x64.zip**, распакуйте и запустите **NetSpeck.exe**. Установка и права администратора не нужны.
 

@@ -11,7 +11,7 @@
   </p>
   <p>
     <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.6.1/NetSpeck-v1.6.1-win-x64.zip"><strong>⬇️ Скачать ZIP</strong></a>
-    &nbsp; · &nbsp; <a href="README.md">🇬🇧 English</a>
+    &nbsp; · &nbsp; <a href="README.md">🌐 English</a>
     &nbsp; · &nbsp; <a href="https://github.com/nt-bro/NetSpeck/issues/new/choose">🐞 Сообщить об ошибке</a>
   </p>
   <p><sub>Без установки · Без прав администратора · Русский и английский · .NET Framework 4.8</sub></p>
