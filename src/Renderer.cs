@@ -6,7 +6,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Runtime.InteropServices;
 
-namespace TaskbarNet {
+namespace NetSpeck {
 internal static class MeterRenderer {
     public static Bitmap Draw(Placement p,Reading r,Settings s,bool dark,SpeedPoint[] points,double now){
         var bitmap=new Bitmap(p.Width,p.Height,PixelFormat.Format32bppPArgb);

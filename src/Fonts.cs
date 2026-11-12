@@ -5,7 +5,7 @@ using System.Drawing.Text;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace TaskbarNet {
+namespace NetSpeck {
 internal sealed class FontChoice {
     public string Name;public bool Custom;
     public override string ToString(){return Name+(Custom?Ui.T(" (свой)"):"");}
@@ -28,11 +28,11 @@ internal static class AppFonts {
     }
     public static string[] Import(string source,string destination=null){
         string ext=Path.GetExtension(source).ToLowerInvariant();
-        if(ext!=".ttf"&&ext!=".otf"&&ext!=".ttc")throw new ArgumentException(TaskbarNet.Ui.T("Выберите файл TTF, OTF или TTC."));
-        var info=new FileInfo(source);if(!info.Exists||info.Length==0||info.Length>50*1024*1024)throw new ArgumentException(TaskbarNet.Ui.T("Не удалось прочитать файл шрифта или он слишком большой."));
+        if(ext!=".ttf"&&ext!=".otf"&&ext!=".ttc")throw new ArgumentException(NetSpeck.Ui.T("Выберите файл TTF, OTF или TTC."));
+        var info=new FileInfo(source);if(!info.Exists||info.Length==0||info.Length>50*1024*1024)throw new ArgumentException(NetSpeck.Ui.T("Не удалось прочитать файл шрифта или он слишком большой."));
         var names=new List<string>();
         try{using(var check=new PrivateFontCollection()){check.AddFontFile(source);foreach(var family in check.Families){names.Add(family.Name);family.Dispose();}if(names.Count==0)throw new ArgumentException();}}
-        catch(ArgumentException){throw new ArgumentException(TaskbarNet.Ui.T("Windows не смогла загрузить этот шрифт. Используйте TTF/TTC или OpenType с TrueType-контурами."));}
+        catch(ArgumentException){throw new ArgumentException(NetSpeck.Ui.T("Windows не смогла загрузить этот шрифт. Используйте TTF/TTC или OpenType с TrueType-контурами."));}
         string hash;using(var stream=File.OpenRead(source))using(var sha=SHA256.Create())hash=BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","");
         string directory=destination??Folder;Directory.CreateDirectory(directory);string target=Path.Combine(directory,hash+ext);
         if(!File.Exists(target))File.Copy(source,target,false);

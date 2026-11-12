@@ -9,22 +9,22 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
-namespace TaskbarNet {
+namespace NetSpeck {
 internal static class Program {
     [STAThread] static int Main(string[] args) {
         try {
             if(args.Length>0&&args[0]=="--diagnose") {Diagnostics.Save(args.Length>1?args[1]:Settings.Folder);return 0;}
             if(args.Length>0&&(args[0]=="--exit"||args[0]=="--recreate"||args[0]=="--menu")) {
-                IntPtr w=Native.FindWindow(null,"TaskbarNet.Controller");
+                IntPtr w=Native.FindWindow(null,"NetSpeck.Controller");
                 if(w==IntPtr.Zero)return 1;
-                string command=args[0]=="--exit"?"TaskbarNet.Exit":args[0]=="--menu"?"TaskbarNet.Menu":"TaskbarNet.Recreate";
+                string command=args[0]=="--exit"?"NetSpeck.Exit":args[0]=="--menu"?"NetSpeck.Menu":"NetSpeck.Recreate";
                 return Native.PostMessage(w,Native.RegisterWindowMessage(command),IntPtr.Zero,IntPtr.Zero)?0:1;
             }
             bool first;
-            using(var mutex=new Mutex(true,@"Local\TaskbarNet.SingleInstance",out first)) {
+            using(var mutex=new Mutex(true,@"Local\NetSpeck.SingleInstance",out first)) {
                 if(!first) {
-                    IntPtr w=Native.FindWindow(null,"TaskbarNet.Controller");
-                    if(w!=IntPtr.Zero)Native.PostMessage(w,Native.RegisterWindowMessage("TaskbarNet.Settings"),IntPtr.Zero,IntPtr.Zero);
+                    IntPtr w=Native.FindWindow(null,"NetSpeck.Controller");
+                    if(w!=IntPtr.Zero)Native.PostMessage(w,Native.RegisterWindowMessage("NetSpeck.Settings"),IntPtr.Zero,IntPtr.Zero);
                     return 0;
                 }
                 // Match Explorer's DPI mode BEFORE any HWND is created. Never force a
@@ -34,6 +34,7 @@ internal static class Program {
                 Application.EnableVisualStyles();Application.SetCompatibleTextRenderingDefault(false);
                 Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
                 Application.ThreadException+=(s,e)=>Log.Write("UI error: "+e.Exception);
+                try{Settings.MigrateAutoStart();}catch(Exception e){Log.Write("Startup migration: "+e.Message);}
                 using(var context=new MeterContext(args))Application.Run(context);
                 mutex.ReleaseMutex();
             }
@@ -43,8 +44,8 @@ internal static class Program {
 }
 internal sealed class Controller : NativeWindow,IDisposable {
     readonly MeterContext owner;
-    readonly uint created=Native.RegisterWindowMessage("TaskbarCreated"),settings=Native.RegisterWindowMessage("TaskbarNet.Settings"),exit=Native.RegisterWindowMessage("TaskbarNet.Exit"),recreate=Native.RegisterWindowMessage("TaskbarNet.Recreate"),menu=Native.RegisterWindowMessage("TaskbarNet.Menu");
-    public Controller(MeterContext context){owner=context;CreateHandle(new CreateParams{Caption="TaskbarNet.Controller",Style=0,ExStyle=0x80});}
+    readonly uint created=Native.RegisterWindowMessage("TaskbarCreated"),settings=Native.RegisterWindowMessage("NetSpeck.Settings"),exit=Native.RegisterWindowMessage("NetSpeck.Exit"),recreate=Native.RegisterWindowMessage("NetSpeck.Recreate"),menu=Native.RegisterWindowMessage("NetSpeck.Menu");
+    public Controller(MeterContext context){owner=context;CreateHandle(new CreateParams{Caption="NetSpeck.Controller",Style=0,ExStyle=0x80});}
     protected override void WndProc(ref Message m){
         if((uint)m.Msg==created){owner.Recreate();owner.RefreshTray();}
         if((uint)m.Msg==settings)owner.OpenSettings();
@@ -73,7 +74,7 @@ internal sealed class MeterContext : ApplicationContext {
         Ui.SetLanguage(config.Language);reading=new Reading();menu.ShowItemToolTips=true;
         savedAdapter=config.AdapterId;
         controller=new Controller(this);
-        tray.Icon=AppIcons.Create(config.IconId,32);tray.Text=Ui.T("TaskbarNet — запуск");tray.Visible=true;
+        tray.Icon=AppIcons.Create(config.IconId,32);tray.Text=Ui.T("NetSpeck — запуск");tray.Visible=true;
         menu.Font=AppFonts.Ui(config);
         tray.ContextMenuStrip=menu;tray.DoubleClick+=(s,e)=>OpenSettings();
         menu.Opening+=(s,e)=>{BuildMenu();e.Cancel=false;};
@@ -122,7 +123,7 @@ internal sealed class MeterContext : ApplicationContext {
             // The child inherits native taskbar visibility and clipping automatically.
             if(refreshChrome){lastChromeRefresh=DateTime.UtcNow;
             string tip=r.Connected?r.AdapterName+" | ↓ "+Rates.Format(r.Down,config.Bits)+" ↑ "+Rates.Format(r.Up,config.Bits):r.AdapterName;
-            if(!p.Safe)tip="TaskbarNet: "+Ui.T(p.Status);
+            if(!p.Safe)tip="NetSpeck: "+Ui.T(p.Status);
             tray.Text=tip.Length>63?tip.Substring(0,60)+"…":tip;
             if(dialog!=null&&!dialog.IsDisposed)dialog.UpdateStatus(r,p);
             }
@@ -144,7 +145,7 @@ internal sealed class MeterContext : ApplicationContext {
     }
     void BuildMenu() {
         menu.Items.Clear();
-        var info=MenuItem("TaskbarNet 1.6","version");info.Enabled=false;menu.Items.Add(info);
+        var info=MenuItem("NetSpeck 1.6.1","version");info.Enabled=false;menu.Items.Add(info);
         Reading r;List<Adapter> list;lock(gate){r=reading;list=new List<Adapter>(adapters);}
         var statusItem=MenuItem(r.AdapterName,"status",false);statusItem.Enabled=false;menu.Items.Add(statusItem);
         menu.Items.Add(new ToolStripSeparator());
@@ -169,7 +170,7 @@ internal sealed class MeterContext : ApplicationContext {
     }
     static ToolStripMenuItem MenuItem(string text,string help,bool translate=true){var item=new ToolStripMenuItem(translate?Ui.T(text):text){Tag=text,AutoToolTip=false,ToolTipText=Ui.Help(help)};item.DropDown.ShowItemToolTips=true;return item;}
     void ChangeAdapter(string id){config.AdapterId=id;ResetSampling();Save();}
-    void Save(){try{if(savedAdapter!=config.AdapterId)ResetSampling();savedAdapter=config.AdapterId;config.Save();Ui.SetLanguage(config.Language);lock(gate)sampler.SetGraphSmoothing(config.GraphSmoothingSeconds);var nextIcon=AppIcons.Create(config.IconId,32);var previousIcon=tray.Icon;tray.Icon=nextIcon;if(previousIcon!=null)previousIcon.Dispose();menu.Font=AppFonts.Ui(config);needsRedraw=true;networkTimer.Change(0,GraphMath.PollInterval(config.GraphEnabled,config.Interval));uiTimer.Interval=GraphMath.FrameInterval(config.GraphEnabled,config.GraphFps);layoutTimer.Change(0,1000);if(dialog!=null&&!dialog.IsDisposed)dialog.SyncFromConfig();}catch(Exception e){MessageBox.Show(Ui.T("Не удалось сохранить настройки: ")+e.Message,"TaskbarNet");}}
+    void Save(){try{if(savedAdapter!=config.AdapterId)ResetSampling();savedAdapter=config.AdapterId;config.Save();Ui.SetLanguage(config.Language);lock(gate)sampler.SetGraphSmoothing(config.GraphSmoothingSeconds);var nextIcon=AppIcons.Create(config.IconId,32);var previousIcon=tray.Icon;tray.Icon=nextIcon;if(previousIcon!=null)previousIcon.Dispose();menu.Font=AppFonts.Ui(config);needsRedraw=true;networkTimer.Change(0,GraphMath.PollInterval(config.GraphEnabled,config.Interval));uiTimer.Interval=GraphMath.FrameInterval(config.GraphEnabled,config.GraphFps);layoutTimer.Change(0,1000);if(dialog!=null&&!dialog.IsDisposed)dialog.SyncFromConfig();}catch(Exception e){MessageBox.Show(Ui.T("Не удалось сохранить настройки: ")+e.Message,"NetSpeck");}}
     void ResizePanel(int dip,ResizePhase phase){
         if(stopped)return;
         if(phase==ResizePhase.Cancel){resizedPlacement=null;needsRedraw=true;layoutTimer.Change(0,1000);return;}
@@ -208,7 +209,7 @@ internal static class Diagnostics {
         Native.Rect rect;Native.GetWindowRect(bar,out rect);
         sb.AppendLine("Taskbar HWND: "+bar+"; rect: "+rect+"; DPI: "+Native.GetDpiForWindow(bar));
         uint shellPid;Native.GetWindowThreadProcessId(bar,out shellPid);sb.AppendLine("Explorer PID: "+shellPid);
-        IntPtr child=Native.FindWindowEx(bar,IntPtr.Zero,null,"TaskbarNet.Meter");
+        IntPtr child=Native.FindWindowEx(bar,IntPtr.Zero,null,"NetSpeck.Meter");
         sb.AppendLine("Meter HWND: "+child+"; parent: "+Native.GetParent(child)+"; visible: "+(child!=IntPtr.Zero&&Native.IsWindowVisible(child)));
         if(child!=IntPtr.Zero){int style=Native.GetWindowLong(child,-16),ex=Native.GetWindowLong(child,-20);sb.AppendLine("WS_CHILD="+((style&0x40000000)!=0)+"; WS_EX_TOPMOST="+((ex&8)!=0)+"; WS_EX_NOACTIVATE="+((ex&0x08000000)!=0));}
         Native.Rect cr;Native.GetWindowRect(child,out cr);sb.AppendLine("Meter rect: "+cr);

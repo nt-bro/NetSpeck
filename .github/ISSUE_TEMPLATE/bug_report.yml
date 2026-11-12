@@ -12,8 +12,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: TaskbarNet version
-      placeholder: 1.6.0 preview
+      label: NetSpeck version
+      placeholder: 1.6.1 preview
     validations:
       required: true
   - type: input

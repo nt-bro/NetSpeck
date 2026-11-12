@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace TaskbarNet {
+namespace NetSpeck {
 internal sealed class SettingsForm : Form {
     readonly Settings config;
     readonly ComboBox adapters=new ComboBox(),units=new ComboBox(),interval=new ComboBox(),smoothing=new ComboBox(),fontFamily=new ComboBox(),fontStyle=new ComboBox();
@@ -25,7 +25,7 @@ internal sealed class SettingsForm : Form {
     int chosenDown,chosenUp;
     public event Action ApplyRequested;
     public SettingsForm(Settings s,List<Adapter> list){
-        SuspendLayout();config=s;Ui.SetLanguage(s.Language);Text="TaskbarNet — настройки";FormBorderStyle=FormBorderStyle.FixedDialog;
+        SuspendLayout();config=s;Ui.SetLanguage(s.Language);Text="NetSpeck — настройки";FormBorderStyle=FormBorderStyle.FixedDialog;
         MaximizeBox=false;MinimizeBox=false;StartPosition=FormStartPosition.CenterScreen;
         AutoScaleDimensions=new SizeF(96,96);AutoScaleMode=AutoScaleMode.Dpi;ClientSize=new Size(452,560);Font=AppFonts.Ui(s);BackColor=Color.White;
         header.Text="Скорость сети в панели задач";header.Font=AppFonts.Heading(s);header.AutoSize=true;header.Location=new Point(18,16);Controls.Add(header);
@@ -145,7 +145,7 @@ internal sealed class SettingsForm : Form {
             config.GraphFill=graphFill.Checked;config.GraphSmoothingSeconds=(double)graphSmoothing.Value;config.DownloadColor=chosenDown;config.UploadColor=chosenUp;
             if(startup.Checked!=Settings.AutoStart)Settings.AutoStart=startup.Checked;
             var h=ApplyRequested;if(h!=null)h();
-        }catch(Exception e){MessageBox.Show(this,Ui.T("Не удалось применить настройки: ")+e.Message,"TaskbarNet");}
+        }catch(Exception e){MessageBox.Show(this,Ui.T("Не удалось применить настройки: ")+e.Message,"NetSpeck");}
     }
     public void SyncFromConfig(){
         syncing=true;

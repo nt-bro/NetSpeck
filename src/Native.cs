@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace TaskbarNet {
+namespace NetSpeck {
 internal static class Native {
     [StructLayout(LayoutKind.Sequential)] internal struct Rect {
         public int Left, Top, Right, Bottom;

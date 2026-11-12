@@ -1,4 +1,5 @@
 # Generated binaries, reports and release packages
+/NetSpeck.exe
 /TaskbarNet.exe
 /build/
 /dist/

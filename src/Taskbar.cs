@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Automation;
 using System.Windows.Forms;
 
-namespace TaskbarNet {
+namespace NetSpeck {
 internal sealed class Placement {
     public IntPtr Bar;public Native.Rect Rect;public uint Dpi;public int X,Width,Height,MinimumX,MinimumWidth;
     public bool Safe;public string Status;
@@ -67,7 +67,7 @@ internal sealed class MeterWindow : NativeWindow,IDisposable {
         IntPtr old=Native.SetThreadDpiAwarenessContext(Native.GetWindowDpiAwarenessContext(bar));
         try {
             // Native child HWND from creation; never a desktop/topmost overlay.
-            CreateHandle(new CreateParams{Caption="TaskbarNet.Meter",Parent=bar,X=0,Y=0,Width=1,Height=1,Style=0x44000000,ExStyle=0x08080080});
+            CreateHandle(new CreateParams{Caption="NetSpeck.Meter",Parent=bar,X=0,Y=0,Width=1,Height=1,Style=0x44000000,ExStyle=0x08080080});
             if(Native.GetParent(Handle)!=bar)throw new InvalidOperationException("Taskbar parent verification failed");
         }finally{Native.SetThreadDpiAwarenessContext(old);}
     }

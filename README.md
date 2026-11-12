@@ -1,10 +1,10 @@
-<img src="icons/flows.svg" width="80" alt="TaskbarNet icon">
+<img src="icons/flows.svg" width="80" alt="NetSpeck icon">
 
-# TaskbarNet
+# NetSpeck
 
 **Current download and upload speed inside the standard Windows 11 taskbar.**
 
-[Русский](README.ru.md) · [Download](https://github.com/nt-bro/TaskbarNet/releases) · [Report an issue](https://github.com/nt-bro/TaskbarNet/issues)
+[Русский](README.ru.md) · [Download](https://github.com/nt-bro/NetSpeck/releases) · [Report an issue](https://github.com/nt-bro/NetSpeck/issues)
 
 Windows 11 x64 · .NET Framework 4.8 · Portable · MIT
 
@@ -18,13 +18,13 @@ Windows 11 x64 · .NET Framework 4.8 · Portable · MIT
 
 Taskbar integration uses an unofficial native child-window technique. It does not patch Explorer, inject a DLL or require a taskbar replacement. Windows updates can affect compatibility.
 
-**Known limitation:** one real S3 sleep test froze the computer and required a manual reboot. The cause is unknown and normal resume has not been verified. Read [known issues](docs/KNOWN_ISSUES.md) before using the preview.
+Sleep/resume has not been verified. Read [known issues](docs/KNOWN_ISSUES.md) before using the preview.
 
 ## Download and run
 
-1. Open [Releases](https://github.com/nt-bro/TaskbarNet/releases).
-2. Download `TaskbarNet-v1.6.0-win-x64.zip` from the release assets. GitHub's automatic **Source code** archives contain source files, not the ready-to-run app.
-3. Extract the archive and run `TaskbarNet.exe`. No installation or administrator rights are required. The portable EXE is unsigned.
+1. Open [Releases](https://github.com/nt-bro/NetSpeck/releases).
+2. Download `NetSpeck-v1.6.1-win-x64.zip` from the release assets. GitHub's automatic **Source code** archives contain source files, not the ready-to-run app.
+3. Extract the archive and run `NetSpeck.exe`. No installation or administrator rights are required. The portable EXE is unsigned.
 4. Right-click the indicator or its tray icon to open settings. Starting the app again also opens settings.
 
 Close the app before replacing its EXE during an update. If startup is enabled and you move the EXE, disable and re-enable startup to update the path.
@@ -42,7 +42,7 @@ Close the app before replacing its EXE during an update. If startup is enabled a
 
 ## What the numbers mean
 
-TaskbarNet reads local 64-bit interface byte counters. It does not download a test file or measure your plan's maximum speed. Values include any LAN traffic on the chosen adapter.
+NetSpeck reads local 64-bit interface byte counters. It does not download a test file or measure your plan's maximum speed. Values include any LAN traffic on the chosen adapter.
 
 Automatic mode selects one adapter using the system internet route. VPN and physical-interface traffic are not added together. With split tunneling, select an adapter manually if needed. Route lookup sends no packets.
 
@@ -50,7 +50,9 @@ Only the primary horizontal taskbar is supported. The app uses available space; 
 
 ## Preferences and privacy
 
-Settings and a bounded local log are stored in `%LOCALAPPDATA%\TaskbarNet`. Imported fonts and icons are copied into its `Fonts` and `Icons` folders. Imported assets are private to this app; system fonts are not bundled.
+Settings and a bounded local log are stored in `%LOCALAPPDATA%\NetSpeck`. Imported fonts and icons are copied into its `Fonts` and `Icons` folders. Imported assets are private to this app; system fonts are not bundled.
+
+Upgrading from the development version: close the previous app before starting NetSpeck. Existing preferences and imported assets are copied automatically on first launch without removing the originals. Enabled startup is updated to the new EXE.
 
 There is no telemetry, analytics or automatic upload. Diagnostic exports may include adapter names and a taskbar screenshot; review them before sharing.
 
@@ -62,7 +64,7 @@ Requires Windows x64 and its .NET Framework 4.8 compiler. No NuGet packages or .
 powershell -NoProfile -File .\build.ps1
 ```
 
-This creates `TaskbarNet.exe` and runs **62 offline checks**. Close any running copy before rebuilding. To create a portable ZIP and SHA-256 checksum:
+This creates `NetSpeck.exe` and runs **66 offline checks**. Close any running copy before rebuilding. To create a portable ZIP and SHA-256 checksum:
 
 ```powershell
 powershell -NoProfile -File .\scripts\package.ps1

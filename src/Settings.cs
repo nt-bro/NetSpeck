@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Text;
 using Microsoft.Win32;
 
-namespace TaskbarNet {
+namespace NetSpeck {
 internal sealed class Settings {
     public string AdapterId="";public bool Bits;public int FontSize=9,Interval=1000;
     public string Language="auto";
@@ -17,10 +17,11 @@ internal sealed class Settings {
     public int GraphSeconds=30,GraphOpacity=24,GraphFps=20;
     public double GraphLineWidth=1,GraphMaximum=10000000;
     public int DownloadColor=0x38BDF8,UploadColor=0x34D399;
-    public static readonly string Folder=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"TaskbarNet");
+    public static readonly string Folder=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"NetSpeck");
     public static readonly string FilePath=Path.Combine(Folder,"settings.ini");
     public static Settings Load() {
         var s=new Settings();bool legacyRaw=false,hasGraphSmoothing=false;
+        try{PreferencesMigration.CopyIfNeeded(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"TaskbarNet"),Folder);}catch(Exception e){Log.Write("Preferences migration: "+e.Message);}
         try {if(File.Exists(FilePath))foreach(string line in File.ReadAllLines(FilePath)){
             int at=line.IndexOf('=');if(at<0)continue;string k=line.Substring(0,at),v=line.Substring(at+1);int n;Guid g;double d;
             if(k=="Adapter"&&(v==""||Guid.TryParse(v,out g)))s.AdapterId=v;
@@ -65,16 +66,23 @@ internal sealed class Settings {
         if(File.Exists(FilePath))File.Replace(temp,FilePath,null);else File.Move(temp,FilePath);
     }
     public static bool AutoStart {
-        get {using(var key=Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run")){return key!=null&&key.GetValue("TaskbarNet")!=null;}}
+        get {using(var key=Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run")){return key!=null&&key.GetValue("NetSpeck")!=null;}}
         set {using(var key=Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run")){
-            if(value)key.SetValue("TaskbarNet","\""+System.Windows.Forms.Application.ExecutablePath+"\"");else key.DeleteValue("TaskbarNet",false);
+            if(value)key.SetValue("NetSpeck","\""+System.Windows.Forms.Application.ExecutablePath+"\"");else key.DeleteValue("NetSpeck",false);
         }}
+    }
+    public static void MigrateAutoStart() {
+        using(var key=Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run",true)) {
+            if(key==null||key.GetValue("TaskbarNet")==null)return;
+            key.SetValue("NetSpeck","\""+System.Windows.Forms.Application.ExecutablePath+"\"");
+            key.DeleteValue("TaskbarNet",false);
+        }
     }
 }
 internal static class Log {
     static readonly object gate=new object();
     public static void Write(string text) {
-        try {lock(gate){Directory.CreateDirectory(Settings.Folder);string p=Path.Combine(Settings.Folder,"taskbarnet.log");if(File.Exists(p)&&new FileInfo(p).Length>200000)File.WriteAllText(p,"");File.AppendAllText(p,DateTime.Now.ToString("s",CultureInfo.InvariantCulture)+" "+text+Environment.NewLine);}}catch{}
+        try {lock(gate){Directory.CreateDirectory(Settings.Folder);string p=Path.Combine(Settings.Folder,"netspeck.log");if(File.Exists(p)&&new FileInfo(p).Length>200000)File.WriteAllText(p,"");File.AppendAllText(p,DateTime.Now.ToString("s",CultureInfo.InvariantCulture)+" "+text+Environment.NewLine);}}catch{}
     }
 }
 }

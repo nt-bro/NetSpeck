@@ -1,12 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
-namespace TaskbarNet {
+namespace NetSpeck {
 class Tests {
     static int count;
     static void Check(bool result,string name){if(!result)throw new Exception("FAIL: "+name);count++;Console.WriteLine("PASS: "+name);}
     static bool Near(double a,double b){return Math.Abs(a-b)<0.0001;}
     static int Main(){try{
+        string fixture=Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"migration-"+Guid.NewGuid().ToString("N"));
+        string legacyFolder=Path.Combine(fixture,"old"),migratedFolder=Path.Combine(fixture,"new");
+        try {
+            PreferencesMigration.CopyIfNeeded(legacyFolder,migratedFolder);
+            Check(!Directory.Exists(migratedFolder),"first install does not create legacy preferences");
+            Directory.CreateDirectory(Path.Combine(legacyFolder,"Fonts"));Directory.CreateDirectory(Path.Combine(legacyFolder,"Icons"));
+            File.WriteAllText(Path.Combine(legacyFolder,"settings.ini"),"Language=ru\nFont=11\nIcon=speedometer\n");
+            File.WriteAllText(Path.Combine(legacyFolder,"Fonts","custom.ttf"),"font");File.WriteAllText(Path.Combine(legacyFolder,"Icons","custom.ico"),"icon");
+            File.WriteAllText(Path.Combine(legacyFolder,"taskbarnet.log"),"private log");File.WriteAllText(Path.Combine(legacyFolder,"Fonts","unrelated.txt"),"private file");
+            PreferencesMigration.CopyIfNeeded(legacyFolder,migratedFolder);
+            Check(File.ReadAllText(Path.Combine(migratedFolder,"settings.ini"))==File.ReadAllText(Path.Combine(legacyFolder,"settings.ini")),"rename preserves preferences and the original settings");
+            Check(File.Exists(Path.Combine(migratedFolder,"Fonts","custom.ttf"))&&File.Exists(Path.Combine(migratedFolder,"Icons","custom.ico"))&&!File.Exists(Path.Combine(migratedFolder,"taskbarnet.log"))&&!File.Exists(Path.Combine(migratedFolder,"Fonts","unrelated.txt")),"rename carries imported assets without unrelated files or logs");
+            File.WriteAllText(Path.Combine(migratedFolder,"settings.ini"),"Language=en\n");PreferencesMigration.CopyIfNeeded(legacyFolder,migratedFolder);
+            Check(File.ReadAllText(Path.Combine(migratedFolder,"settings.ini"))=="Language=en\n","later launches retain new preferences");
+        } finally {if(Directory.Exists(fixture))Directory.Delete(fixture,true);}
         Check(Ui.Resolve("auto",new System.Globalization.CultureInfo("ru-RU"))=="ru","first-run automatic language follows Russian Windows UI");
         Check(Ui.Resolve("auto",new System.Globalization.CultureInfo("en-US"))=="en"&&Ui.Resolve("auto",new System.Globalization.CultureInfo("de-DE"))=="en","automatic language defaults to English for other Windows UI languages");
         Check(Ui.Resolve("en",new System.Globalization.CultureInfo("ru-RU"))=="en"&&Ui.Resolve("ru",new System.Globalization.CultureInfo("en-US"))=="ru","explicit language overrides system UI language");

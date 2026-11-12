@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace TaskbarNet {
+namespace NetSpeck {
 internal sealed class IconChoice {
     public string Id,Name;
     public override string ToString(){return Id=="flows"?Ui.T("1 — Потоки"):Id=="speedometer"?Ui.T("3 — Спидометр"):Name;}
@@ -25,7 +25,7 @@ internal static class AppIcons {
         return Builtin(id=="speedometer"?"speedometer":"flows",size);
     }
     static Icon Builtin(string id,int size){
-        using(var stream=Assembly.GetExecutingAssembly().GetManifestResourceStream("TaskbarNet.Icons."+id+".ico")){
+        using(var stream=Assembly.GetExecutingAssembly().GetManifestResourceStream("NetSpeck.Icons."+id+".ico")){
             if(stream==null)throw new InvalidOperationException("Missing built-in icon resource: "+id);
             using(var buffer=new MemoryStream()){stream.CopyTo(buffer);return FromBytes(buffer.ToArray(),size);}
         }

@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.6.0 — public preview — 2026-11-12
+## 1.6.1 — public preview — 2026-11-12
 
-First public packaging of the application developed as TaskbarNet 1.6.
+First public release under the NetSpeck name. Existing development-version preferences, imported fonts/icons and enabled startup are migrated automatically.
 
 - Download/upload numbers embedded in the standard Windows 11 taskbar.
 - Separate numeric averaging and graph smoothing, with a three-stage graph filter that suppresses periodic packet-batch ripple.

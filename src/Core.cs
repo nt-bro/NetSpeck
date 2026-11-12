@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace TaskbarNet {
+namespace NetSpeck {
 internal sealed class Adapter {
     public string Id, Name; public uint Index; public bool Up; public ulong Received,Sent;
     public override string ToString() { return Name+(Up?"":Ui.T(" (отключён)")); }

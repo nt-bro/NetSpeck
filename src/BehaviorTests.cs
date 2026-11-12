@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
-namespace TaskbarNet {
+namespace NetSpeck {
 class BehaviorTests {
  static int checks;static StreamWriter report;
  static void Check(bool result,string name){if(!result)throw new Exception("FAIL: "+name);checks++;report.WriteLine("PASS: "+name);report.Flush();}
@@ -19,7 +19,7 @@ class BehaviorTests {
  static void MouseMessage(MeterWindow meter,int message,int x){if(message==0x201)meter.BeginResize(x,false);else if(message==0x200)meter.MoveResize(x);else if(message==0x202)meter.EndResize();}
  [STAThread] static int Main(string[] args){
   bool hadSettings=File.Exists(Settings.FilePath);byte[] baseline=hadSettings?File.ReadAllBytes(Settings.FilePath):new byte[0];Directory.CreateDirectory(Settings.Folder);
-  object autorun;using(var key=Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run"))autorun=key==null?null:key.GetValue("TaskbarNet");
+  object autorun;using(var key=Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run"))autorun=key==null?null:key.GetValue("NetSpeck");
   MeterContext context=null;
   try{
    Directory.CreateDirectory(args[0]);report=new StreamWriter(Path.Combine(args[0],"menu-behavior-tests.txt"));
@@ -70,8 +70,8 @@ class BehaviorTests {
     using(var expected=AppIcons.Create(id,32))Check(IconInk(trayIcon.Icon)==IconInk(expected),"selected icon reaches the real tray: "+id);
     using(var expected=AppIcons.Create(id,48))Check(IconInk(form.Icon)==IconInk(expected),"selected icon reaches the settings window: "+id);
    }
-   string iconFixture=Path.Combine(Path.GetTempPath(),"TaskbarNet-icon-test-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(iconFixture);string iconLibrary=Path.Combine(iconFixture,"library");
-   string sourceIco=Path.Combine(iconFixture,"own.ico");using(var stream=Assembly.GetExecutingAssembly().GetManifestResourceStream("TaskbarNet.Icons.flows.ico"))using(var output=File.Create(sourceIco))stream.CopyTo(output);
+   string iconFixture=Path.Combine(Path.GetTempPath(),"NetSpeck-icon-test-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(iconFixture);string iconLibrary=Path.Combine(iconFixture,"library");
+   string sourceIco=Path.Combine(iconFixture,"own.ico");using(var stream=Assembly.GetExecutingAssembly().GetManifestResourceStream("NetSpeck.Icons.flows.ico"))using(var output=File.Create(sourceIco))stream.CopyTo(output);
    string importedIco=AppIcons.Import(sourceIco,iconLibrary);Check(AppIcons.ValidId(importedIco)&&File.Exists(Path.Combine(iconLibrary,importedIco.Substring(7)+".ico")),"own ICO imports into a private library");
    string sourcePng=Path.Combine(iconFixture,"wide.png");using(var bitmap=new System.Drawing.Bitmap(64,32)){using(var g=System.Drawing.Graphics.FromImage(bitmap)){g.Clear(System.Drawing.Color.Transparent);g.FillRectangle(System.Drawing.Brushes.DeepSkyBlue,8,4,48,24);}bitmap.Save(sourcePng,System.Drawing.Imaging.ImageFormat.Png);}
    string importedPng=AppIcons.Import(sourcePng,iconLibrary);string converted=Path.Combine(iconLibrary,importedPng.Substring(7)+".ico");using(var icon=AppIcons.FromBytes(File.ReadAllBytes(converted),32))using(var bitmap=icon.ToBitmap())Check(bitmap.GetPixel(16,0).A==0&&bitmap.GetPixel(16,16).A>200,"PNG conversion preserves transparency and non-square aspect ratio");
@@ -106,7 +106,7 @@ class BehaviorTests {
    Check(!meter.IsResizing&&afterRect.Right==beforeRect.Right&&Math.Abs(afterRect.Width-target)<=2,"mouse drag resizes only left edge and preserves right anchor; before="+beforeRect+" after="+afterRect+" target="+target+" layout="+placement.X+","+placement.Width);
    Check(Settings.Load().PanelWidth==ResizeMath.ToDip(target,placement.Dpi),"mouse-up persists resized logical width");
    Item(menu,"Сбросить ширину").PerformClick();
-   string fixture=Path.Combine(Path.GetTempPath(),"TaskbarNet-font-test-"+Guid.NewGuid().ToString("N"));
+   string fixture=Path.Combine(Path.GetTempPath(),"NetSpeck-font-test-"+Guid.NewGuid().ToString("N"));
    var imported=AppFonts.Import(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts),"segoeui.ttf"),fixture);
    Check(imported.Length>0&&Directory.GetFiles(fixture).Length==1,"own TTF file imported privately without installation");
    using(var loadedFont=AppFonts.Create(imported[0],12,System.Drawing.FontStyle.Regular,System.Drawing.GraphicsUnit.Pixel))Check(loadedFont.Name==imported[0],"imported font can render");
@@ -142,13 +142,13 @@ class BehaviorTests {
    Check(!((NumericUpDown)Field(form,"graphSmoothing")).Enabled,"graph smoothing control disables with the graph");
    Check(((System.Windows.Forms.Timer)Field(context,"uiTimer")).Interval==250,"disabling graph stops high-rate repaint timer");
    Call(context,"BuildMenu");Item(menu,"Язык").DropDownItems[2].PerformClick();
-   Check(Settings.Load().Language=="en"&&form.Text=="TaskbarNet — Settings"&&((TabControl)Field(form,"tabs")).TabPages[1].Text=="Graph","English menu choice persists and translates open settings without restart");
+   Check(Settings.Load().Language=="en"&&form.Text=="NetSpeck — Settings"&&((TabControl)Field(form,"tabs")).TabPages[1].Text=="Graph","English menu choice persists and translates open settings without restart");
    Check(tooltips.GetToolTip((Control)Field(form,"graphSmoothing")).Contains("Graph-only"),"setting tooltips switch to English");
    var labels=(System.Collections.Generic.Dictionary<Control,string>)Field(form,"localized");bool translated=true;foreach(var pair in labels)if(System.Text.RegularExpressions.Regex.IsMatch(pair.Key.Text,"[А-Яа-яЁё]"))translated=false;
    Check(translated,"English window has no untranslated Russian captions");
    Call(context,"BuildMenu");Check(Item(menu,"Настройки…").Text=="Settings…"&&CheckMenuHints(menu.Items)>20,"context menu and nested hints switch to English");
-   ((ComboBox)Field(form,"language")).SelectedIndex=1;Call(form,"Apply");Check(Settings.Load().Language=="ru"&&form.Text=="TaskbarNet — настройки","language can switch back through settings without restart");
-   ((ComboBox)Field(form,"language")).SelectedIndex=2;Call(form,"Apply");Check(Settings.Load().Language=="en"&&form.Text=="TaskbarNet — Settings","English can also be selected through settings");
+   ((ComboBox)Field(form,"language")).SelectedIndex=1;Call(form,"Apply");Check(Settings.Load().Language=="ru"&&form.Text=="NetSpeck — настройки","language can switch back through settings without restart");
+   ((ComboBox)Field(form,"language")).SelectedIndex=2;Call(form,"Apply");Check(Settings.Load().Language=="en"&&form.Text=="NetSpeck — Settings","English can also be selected through settings");
    Call(context,"BuildMenu");Item(menu,"Язык").DropDownItems[0].PerformClick();Check(Settings.Load().Language=="auto"&&Ui.Language==Ui.Resolve("auto",System.Globalization.CultureInfo.CurrentUICulture),"automatic language mode follows Windows again");
    Call(context,"BuildMenu");Item(menu,"Язык").DropDownItems[1].PerformClick();Call(context,"BuildMenu");
    context.OpenMeterMenu();Application.DoEvents();Application.DoEvents();
@@ -160,7 +160,7 @@ class BehaviorTests {
   }catch(Exception e){if(report!=null){report.WriteLine(e);report.Flush();}Console.Error.WriteLine(e);return 1;}
   finally{
    if(context!=null)context.Dispose();if(hadSettings)File.WriteAllBytes(Settings.FilePath,baseline);else if(File.Exists(Settings.FilePath))File.Delete(Settings.FilePath);
-   using(var key=Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run")){if(autorun==null)key.DeleteValue("TaskbarNet",false);else key.SetValue("TaskbarNet",autorun);}
+   using(var key=Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run")){if(autorun==null)key.DeleteValue("NetSpeck",false);else key.SetValue("NetSpeck",autorun);}
    if(report!=null)report.Dispose();
   }
  }

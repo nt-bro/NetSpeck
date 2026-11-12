@@ -7,7 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Drawing.Imaging;
-namespace TaskbarNet {
+namespace NetSpeck {
 class IntegrationTests {
     static void Handles(Control control){IntPtr h=control.Handle;foreach(Control c in control.Controls)Handles(c);}
     static int Validate(Control parent){int combos=0;foreach(Control control in parent.Controls){
