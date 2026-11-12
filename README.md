@@ -38,7 +38,6 @@ Close the app before replacing its EXE during an update. If startup is enabled a
 | ↔️ **Panel width** | Enable **Resize panel width** and drag the left edge. The right edge stays fixed; **Reset panel width** restores automatic sizing. |
 | 🔤 **Fonts** | Installed families and styles, preview and private TTF/TTC/compatible OTF imports. |
 | 🎨 **Icons** | Flows, Speedometer or your own ICO/PNG files for the tray and app windows. |
-| 🌐 **Language** | Russian or English, selected automatically from Windows or chosen manually. Tooltips explain the settings. |
 | 🔄 **Startup & recovery** | Optional startup at sign-in and indicator recreation after Explorer recreates the taskbar. |
 
 > [!TIP]
@@ -67,7 +66,7 @@ Actual screenshots from Windows 11.
 
 Taskbar integration uses an unofficial native child-window technique. It does not patch Explorer, inject a DLL or require a taskbar replacement. Windows updates can affect compatibility.
 
-Sleep/resume has not been verified. See [known issues](docs/KNOWN_ISSUES.md) for the tested scenarios and remaining limitations.
+See [known issues](docs/KNOWN_ISSUES.md) for the tested scenarios and remaining limitations.
 
 ## 🔎 What the numbers mean
 
@@ -108,7 +107,7 @@ Interactive checks require a compatible Windows 11 desktop and an active adapter
 powershell -NoProfile -File .\build.ps1 -Integration -Menus
 ```
 
-These additionally check all four settings tabs in both languages, **80 render cases**, menu/settings behavior and icon imports. They temporarily alter and restore local app preferences. They do not trigger sleep or restart Explorer. CI runs only the build and offline checks; a successful CI build is not a compatibility test for its Windows Server runner.
+These additionally check all four settings tabs in both languages, **80 render cases**, menu/settings behavior and icon imports. They temporarily alter and restore local app preferences. They do not restart Explorer. CI runs only the build and offline checks; a successful CI build is not a compatibility test for its Windows Server runner.
 
 </details>
 

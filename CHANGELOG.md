@@ -13,4 +13,4 @@ First public release under the NetSpeck name. Existing development-version prefe
 - Optional per-user startup and indicator recreation when Explorer recreates the taskbar.
 - Build script, offline tests, CI and portable packaging.
 
-Compatibility is currently verified only on Windows 11 26H2 26300.9974 x64. See [known issues](docs/KNOWN_ISSUES.md), including the unverified sleep/resume scenario.
+Compatibility is currently verified only on Windows 11 26H2 26300.9974 x64. See [known issues](docs/KNOWN_ISSUES.md).

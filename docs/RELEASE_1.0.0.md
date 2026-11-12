@@ -21,7 +21,7 @@ The attached **.sha256** file contains the ZIP checksum. GitHub's automatic **So
 - 🎚️ **Independent smoothing:** number averaging and graph smoothing have separate controls.
 - 📈 **A graph you can tune:** history, frame rate, colors, opacity, scale, line width, fill and a 10% fade at each end.
 - 🔤 **Your own look:** drag the left edge to adjust width, choose fonts and import your own fonts or ICO/PNG icons. Flows and Speedometer icons are included.
-- 🌐 **Russian & English:** automatic Windows-language selection, manual switching and explanatory tooltips. Optional startup at sign-in.
+- ⚙️ **Settings & startup:** explanatory tooltips for menus and settings, plus optional startup at sign-in.
 
 > [!TIP]
 > **The graph can be completely disabled** from the right-click menu or **Settings → Graph**. Download/upload numbers remain visible.
@@ -40,7 +40,7 @@ The attached **.sha256** file contains the ZIP checksum. GitHub's automatic **So
 
 Verified on **Windows 11 26H2 26300.9974 x64**, with the standard primary horizontal taskbar. Other Windows 11 builds are unverified; Windows 10 is unsupported. Taskbar integration is unofficial and Windows updates may affect it. The EXE is unsigned.
 
-Sleep/resume remains unverified. See [known issues](https://github.com/nt-bro/NetSpeck/blob/main/docs/KNOWN_ISSUES.md) and the [full README](https://github.com/nt-bro/NetSpeck).
+See [known issues](https://github.com/nt-bro/NetSpeck/blob/main/docs/KNOWN_ISSUES.md) and the [full README](https://github.com/nt-bro/NetSpeck).
 
 ## 🧪 Verification
 

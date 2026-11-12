@@ -8,8 +8,7 @@ icon to open Settings; starting the app again also opens Settings.
 
 Verified only on Windows 11 26H2 build 26300.9974 x64 with the standard primary
 horizontal taskbar. Other Windows 11 builds are unverified. Windows 10 is not
-supported. Read KNOWN_ISSUES.md before using this preview. Normal sleep/resume
-has not been verified.
+supported. Read KNOWN_ISSUES.md before using this preview.
 
 Numbers and the optional graph have independent smoothing. To resize, enable
 Resize panel width in the menu and drag the left edge. Fonts, icons, colors,
@@ -29,8 +28,7 @@ you may also remove its LocalAppData folder if you do not need the preferences.
 
 Проверена только Windows 11 26H2 26300.9974 x64 со стандартной основной
 горизонтальной панелью задач. Работа на других сборках не подтверждена,
-Windows 10 не поддерживается. Прочитайте KNOWN_ISSUES.md: восстановление
-после сна пока не проверено.
+Windows 10 не поддерживается. Ограничения перечислены в KNOWN_ISSUES.md.
 
 Сглаживание графика отдельно от усреднения чисел. Ширина меняется за левый
 край после включения режима в меню. Параметры шрифтов, значков, графика,
