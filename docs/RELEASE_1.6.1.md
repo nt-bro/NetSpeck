@@ -12,10 +12,6 @@ Features include independent number averaging and graph smoothing, an optional c
 
 **The graph can be fully disabled** from the indicator's right-click menu or Settings → Graph; download/upload numbers remain visible.
 
-![Indicator without a graph — rendered example](https://raw.githubusercontent.com/nt-bro/NetSpeck/v1.6.1/docs/images/indicator-no-graph.png)
-
-*Graph disabled: example drawn by the app with sample values.*
-
 ## Preview compatibility
 
 Verified only on **Windows 11 26H2 26300.9974 x64** with the standard primary horizontal taskbar. Other builds are unverified; Windows 10 is unsupported. Integration is unofficial and Windows updates may affect it. The EXE is unsigned.
