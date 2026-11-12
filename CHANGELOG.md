@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2 — public preview — 2026-11-12
+
+- Keep the last verified indicator position while an Explorer popup temporarily withdraws the taskbar accessibility tree.
+- Allow a short recovery interval after a popup closes; persistent failures, confirmed occupied space, changed geometry and changed sizes still invalidate the old position.
+- Added 14 regression checks for popup lifetime, layout recovery, collisions, DPI and native popup detection.
+
 ## 1.0.1 — public preview — 2026-11-12
 
 - Exclude popup menus and owned windows from taskbar free-space calculation to prevent sideways jumps when opening a menu nearby.

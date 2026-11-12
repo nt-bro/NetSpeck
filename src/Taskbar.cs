@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace NetSpeck {
 internal sealed class Placement {
     public IntPtr Bar;public Native.Rect Rect;public uint Dpi;public int X,Y,Width,Height,MinimumX,MinimumY,MinimumWidth,MinimumHeight;public bool Vertical;
-    public bool Safe;public string Status;
+    public bool Safe,Unavailable,TransientShellUi;public string Status;
     public int Start {get{return Vertical?Y:X;}}
     public int Extent {get{return Vertical?Height:Width;}}
     public int MinimumStart {get{return Vertical?MinimumY:MinimumX;}}
@@ -19,8 +19,41 @@ internal sealed class Placement {
     public Placement WithExtent(int extent){int end=Start+Extent;extent=Math.Max(MinimumExtent,Math.Min(extent,end-MinimumStart));var p=(Placement)MemberwiseClone();if(Vertical){p.Y=end-extent;p.Height=extent;}else{p.X=end-extent;p.Width=extent;}return p;}
     public Placement WithWidth(int width){return WithExtent(width);}
 }
+// Explorer can temporarily withdraw its UIA taskbar tree while a menu is open.
+// Retain only a previously verified placement, on the exact same bar geometry
+// and with the same requested size. A real no-space result is never cached.
+internal sealed class PlacementTracker {
+    Placement verified;double unavailableSince=Double.NaN;
+    public void Reset(){verified=null;unavailableSince=Double.NaN;}
+    public Placement Resolve(Placement next,double now){
+        if(next==null){Reset();return null;}
+        bool compatible=verified!=null&&verified.SameBar(next)&&verified.Vertical==next.Vertical&&verified.Extent==next.Extent&&verified.MinimumExtent==next.MinimumExtent;
+        if(!compatible)Reset();
+        if(compatible&&next.TransientShellUi&&(next.Safe||next.Unavailable)){unavailableSince=now;return verified;}
+        if(next.Safe){verified=next;unavailableSince=Double.NaN;return next;}
+        if(compatible&&next.Unavailable){
+            if(Double.IsNaN(unavailableSince))unavailableSince=now;
+            if(now-unavailableSince<3)return verified;
+        }
+        // Keep no stale placement after a confirmed collision, geometry change,
+        // or prolonged provider failure outside a shell popup.
+        Reset();return next;
+    }
+}
 internal enum ResizePhase { Preview,Commit,Cancel }
 internal static class TaskbarLayout {
+    internal static bool ShellUiIsTransient(IntPtr bar){
+        uint process;uint thread=Native.GetWindowThreadProcessId(bar,out process);
+        var info=new Native.GuiThreadInfo{Size=(uint)Marshal.SizeOf(typeof(Native.GuiThreadInfo))};
+        if(Native.GetGUIThreadInfo(thread,ref info)&&(info.Flags&0x1C)!=0)return true;
+        bool popup=false;
+        Native.EnumWindows((window,parameter)=>{
+            if(window==bar||!Native.IsWindowVisible(window)||(Native.GetWindowLong(window,-16)&unchecked((int)0x80000000))==0)return true;
+            if(Native.GetAncestor(window,3)==bar){popup=true;return false;}
+            return true;
+        },IntPtr.Zero);
+        return popup;
+    }
     public static Placement Inspect(Settings settings) {
         var p=new Placement{Bar=Native.FindWindow("Shell_TrayWnd",null),Status="Ожидание панели задач"};
         if(p.Bar==IntPtr.Zero||!Native.GetWindowRect(p.Bar,out p.Rect))return p;
@@ -36,6 +69,7 @@ internal static class TaskbarLayout {
             int minimum=(int)Math.Ceiling(minDip*scale),extent=Math.Max(minimum,(int)Math.Ceiling(desired*scale));
             if(p.Vertical){p.MinimumHeight=minimum;p.Width=p.Rect.Width;p.Height=extent;}else{p.MinimumWidth=minimum;p.Width=extent;p.Height=p.Rect.Height;}
             if((p.Vertical?p.Rect.Width:p.Rect.Height)<20*scale){p.Status="Неподдерживаемая геометрия панели задач";return p;}
+            p.TransientShellUi=ShellUiIsTransient(p.Bar);
             var blocked=new List<int[]>();
             var root=AutomationElement.FromHandle(p.Bar);
             var elements=root.FindAll(TreeScope.Descendants,Condition.TrueCondition);
@@ -56,7 +90,8 @@ internal static class TaskbarLayout {
                 }catch(ElementNotAvailableException){}
             }
             // Fail closed if the shell's UIA provider cannot expose its layout.
-            if(visibleInteractive==0){p.Status="Не удалось проверить свободное место панели задач";return p;}
+            p.TransientShellUi=p.TransientShellUi||ShellUiIsTransient(p.Bar);
+            if(visibleInteractive==0){p.Unavailable=true;p.Status="Не удалось проверить свободное место панели задач";return p;}
             IntPtr tray=Native.FindWindowEx(p.Bar,IntPtr.Zero,"TrayNotifyWnd",null);Native.Rect tr;
             int end=p.Vertical?p.Rect.Height:p.Rect.Width;
             if(tray!=IntPtr.Zero&&Native.GetWindowRect(tray,out tr)){

@@ -17,6 +17,39 @@ class BehaviorTests {
  // Exercise the real HWND and the same pointer handlers without taking global
  // mouse capture from the person using the desktop during automated checks.
  static void MouseMessage(MeterWindow meter,int message,int x){if(message==0x201)meter.BeginResize(x,false);else if(message==0x200)meter.MoveResize(x);else if(message==0x202)meter.EndResize();}
+ static Placement Snapshot(bool safe,bool unavailable,bool menu){return new Placement{Bar=new IntPtr(123),Rect=new Native.Rect{Left=0,Top=2088,Right=3840,Bottom=2160},Dpi=144,X=3254,Width=200,Height=72,MinimumWidth=120,MinimumX=2500,Safe=safe,Unavailable=unavailable,TransientShellUi=menu};}
+ static void PlacementRegression(){
+   var tracker=new PlacementTracker();var good=Snapshot(true,false,false);
+   var unavailable=Snapshot(false,true,true);
+   Check(!tracker.Resolve(unavailable,0).Safe,"popup cannot invent a first unverified position");
+   tracker.Resolve(good,1);
+   Check(Object.ReferenceEquals(good,tracker.Resolve(unavailable,2)),"empty UIA snapshot during menu retains verified placement");
+   Check(Object.ReferenceEquals(good,tracker.Resolve(unavailable,60)),"indicator stays visible for the entire long-lived menu");
+   var shifted=Snapshot(true,false,true);shifted.X=2800;
+   Check(tracker.Resolve(shifted,61).X==good.X,"menu cannot replace a verified position with a transient shifted candidate");
+   var recovering=Snapshot(false,true,false);
+   Check(tracker.Resolve(recovering,62).Safe,"menu-close provider recovery does not flicker");
+   Check(!tracker.Resolve(recovering,65).Safe,"prolonged UIA failure without a popup still hides safely");
+   tracker.Resolve(good,66);var noSpace=Snapshot(false,false,true);
+   Check(!tracker.Resolve(noSpace,67).Safe,"confirmed occupied space is never masked by popup retention");
+   tracker.Resolve(good,70);var moved=Snapshot(false,true,true);moved.Rect.Top=0;moved.Rect.Bottom=72;
+   Check(!tracker.Resolve(moved,71).Safe,"moving the taskbar invalidates a cached popup placement");
+   tracker.Resolve(good,72);var resized=Snapshot(false,true,true);resized.Width=250;
+   Check(!tracker.Resolve(resized,73).Safe,"requested panel size change invalidates cached placement");
+   tracker.Resolve(good,74);var dpi=Snapshot(false,true,true);dpi.Dpi=192;
+   Check(!tracker.Resolve(dpi,75).Safe,"DPI change invalidates cached placement");
+   tracker.Resolve(good,76);tracker.Reset();Check(!tracker.Resolve(unavailable,77).Safe,"Explorer recreation clears the cached placement");
+   tracker.Resolve(good,78);var fresh=Snapshot(true,false,false);fresh.X=3206;
+   Check(tracker.Resolve(fresh,79).X==3206,"verified layout changes apply after menu closes");
+   using(var host=new Form()){
+     IntPtr h=host.Handle;var popup=new NativeWindow();
+     try{
+       popup.CreateHandle(new CreateParams{Caption="NetSpeck.TestPopup",Parent=h,X=-30000,Y=-30000,Width=20,Height=20,Style=unchecked((int)0x90000000),ExStyle=0x08000080});
+       Check(TaskbarLayout.ShellUiIsTransient(h),"native owned popup is detected without depending on UIA visibility");
+       Native.ShowWindow(popup.Handle,0);Check(!TaskbarLayout.ShellUiIsTransient(h),"native popup detection clears after closing");
+     }finally{popup.DestroyHandle();}
+   }
+ }
  [STAThread] static int Main(string[] args){
   bool hadSettings=File.Exists(Settings.FilePath);byte[] baseline=hadSettings?File.ReadAllBytes(Settings.FilePath):new byte[0];Directory.CreateDirectory(Settings.Folder);
   object autorun;using(var key=Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run"))autorun=key==null?null:key.GetValue("NetSpeck");
@@ -35,6 +68,7 @@ class BehaviorTests {
    File.WriteAllBytes(Settings.FilePath,baseline);
    IntPtr bar=Native.FindWindow("Shell_TrayWnd",null);Native.SetThreadDpiAwarenessContext(Native.GetWindowDpiAwarenessContext(bar));
    Application.EnableVisualStyles();Application.SetCompatibleTextRenderingDefault(false);
+   PlacementRegression();
    context=new MeterContext(new string[0]);bool exited=false;context.ThreadExit+=(s,e)=>exited=true;
    ((Settings)Field(context,"config")).Language="ru";Call(context,"Save");
    Thread.Sleep(500);Application.DoEvents();

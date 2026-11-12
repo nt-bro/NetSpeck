@@ -67,9 +67,10 @@ internal sealed class MeterContext : ApplicationContext {
     readonly System.Windows.Forms.Timer uiTimer=new System.Windows.Forms.Timer();
     readonly NotifyIcon tray=new NotifyIcon();readonly ContextMenuStrip menu=new ContextMenuStrip();
     Reading reading=new Reading();List<Adapter> adapters=new List<Adapter>();Placement placement,resizedPlacement;
+    readonly PlacementTracker placementTracker=new PlacementTracker();
     MeterWindow meter;SettingsForm dialog;bool stopped,dark=true,needsRedraw=true;
     int networkBusy,layoutBusy;long lastReadingTicks;DateTime lastRender=DateTime.MinValue,lastChromeRefresh=DateTime.MinValue;
-    string lastStatus="",savedAdapter;readonly string smokeFolder;readonly DateTime started=DateTime.UtcNow;bool openSettingsWhenReady;
+    string lastStatus="",lastLayoutSignal="",savedAdapter;readonly string smokeFolder;readonly DateTime started=DateTime.UtcNow;bool openSettingsWhenReady;
     public MeterContext(string[] args) {
         Ui.SetLanguage(config.Language);reading=new Reading();menu.ShowItemToolTips=true;
         savedAdapter=config.AdapterId;
@@ -98,8 +99,8 @@ internal sealed class MeterContext : ApplicationContext {
     }
     void Layout(object state) {
         if(stopped||Interlocked.Exchange(ref layoutBusy,1)!=0)return;
-        try{var p=TaskbarLayout.Inspect(config);lock(gate)placement=p;}
-        catch(Exception e){lock(gate)placement=new Placement{Status="Не удалось проверить расположение панели задач"};Log.Write("Layout: "+e.Message);}
+        try{var p=TaskbarLayout.Inspect(config);string signal="safe="+p.Safe+", unavailable="+p.Unavailable+", shellPopup="+p.TransientShellUi;lock(gate)placement=placementTracker.Resolve(p,clock.Elapsed.TotalSeconds);if(signal!=lastLayoutSignal){lastLayoutSignal=signal;Log.Write("Layout provider: "+signal);}}
+        catch(Exception e){lock(gate){placementTracker.Reset();placement=new Placement{Status="Не удалось проверить расположение панели задач"};}Log.Write("Layout: "+e.Message);}
         finally{Interlocked.Exchange(ref layoutBusy,0);}
     }
     void Tick() {
@@ -145,7 +146,7 @@ internal sealed class MeterContext : ApplicationContext {
     }
     void BuildMenu() {
         menu.Items.Clear();
-        var info=MenuItem("NetSpeck 1.0.1","version");info.Enabled=false;menu.Items.Add(info);
+        var info=MenuItem("NetSpeck 1.0.2","version");info.Enabled=false;menu.Items.Add(info);
         Reading r;List<Adapter> list;lock(gate){r=reading;list=new List<Adapter>(adapters);}
         var statusItem=MenuItem(r.AdapterName,"status",false);statusItem.Enabled=false;menu.Items.Add(statusItem);
         menu.Items.Add(new ToolStripSeparator());
@@ -196,7 +197,7 @@ internal sealed class MeterContext : ApplicationContext {
         }finally{if(old!=IntPtr.Zero)Native.SetThreadDpiAwarenessContext(old);}
     }
     public void ResetSampling(){lock(gate){sampler.Reset();}needsRedraw=true;}
-    public void Recreate(){resizedPlacement=null;if(meter!=null){meter.Dispose();meter=null;}needsRedraw=true;layoutTimer.Change(0,1000);ResetSampling();Log.Write("Recreate requested");}
+    public void Recreate(){lock(gate)placementTracker.Reset();resizedPlacement=null;if(meter!=null){meter.Dispose();meter=null;}needsRedraw=true;layoutTimer.Change(0,1000);ResetSampling();Log.Write("Recreate requested");}
     public void RefreshTray(){tray.Visible=false;tray.Visible=true;}
     public void Quit(){if(stopped)return;stopped=true;uiTimer.Stop();networkTimer.Dispose();layoutTimer.Dispose();if(dialog!=null)dialog.Close();if(meter!=null){meter.Dispose();meter=null;}tray.Visible=false;ExitThread();}
     protected override void Dispose(bool disposing){if(disposing){Quit();uiTimer.Dispose();var icon=tray.Icon;tray.Dispose();if(icon!=null)icon.Dispose();menu.Dispose();controller.Dispose();}base.Dispose(disposing);}

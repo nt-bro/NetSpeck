@@ -11,6 +11,12 @@ internal static class Native {
         public override string ToString() { return Left+","+Top+","+Right+","+Bottom; }
     }
     [StructLayout(LayoutKind.Sequential, Pack=1)] internal struct Blend { public byte Operation, Flags, Alpha, Format; }
+    [StructLayout(LayoutKind.Sequential)] internal struct GuiThreadInfo {
+        public uint Size,Flags;public IntPtr Active,Focus,Capture,MenuOwner,MoveSize,Caret;public Rect CaretRect;
+    }
+    internal delegate bool EnumWindowCallback(IntPtr window,IntPtr parameter);
+    [DllImport("user32.dll")] internal static extern bool GetGUIThreadInfo(uint thread,ref GuiThreadInfo info);
+    [DllImport("user32.dll")] internal static extern bool EnumWindows(EnumWindowCallback callback,IntPtr parameter);
     [DllImport("user32.dll", CharSet=CharSet.Unicode)] internal static extern IntPtr FindWindow(string cls,string title);
     [DllImport("user32.dll", CharSet=CharSet.Unicode)] internal static extern IntPtr FindWindowEx(IntPtr parent,IntPtr after,string cls,string title);
     [DllImport("user32.dll")] internal static extern IntPtr GetParent(IntPtr window);
