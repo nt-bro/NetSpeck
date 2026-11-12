@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -106,7 +106,7 @@ internal sealed class MeterContext : ApplicationContext {
         if(stopped)return;
         Placement p;Reading r;SpeedPoint[] points;lock(gate){p=placement;r=reading;points=sampler.History.Snapshot();}
         if(p==null)return;
-        if(resizedPlacement!=null){if(resizedPlacement.Bar==p.Bar)p=resizedPlacement;else resizedPlacement=null;}
+        if(resizedPlacement!=null){if(resizedPlacement.SameBar(p))p=resizedPlacement;else resizedPlacement=null;}
         if(openSettingsWhenReady){openSettingsWhenReady=false;OpenSettings();}
         if(p.Status!=lastStatus){lastStatus=p.Status;Log.Write(p.Status+"; bar="+p.Bar+"; rect="+p.Rect+"; x="+p.X+"; dpi="+p.Dpi);}
         try {
@@ -145,7 +145,7 @@ internal sealed class MeterContext : ApplicationContext {
     }
     void BuildMenu() {
         menu.Items.Clear();
-        var info=MenuItem("NetSpeck 1.0.0","version");info.Enabled=false;menu.Items.Add(info);
+        var info=MenuItem("NetSpeck 1.0.1","version");info.Enabled=false;menu.Items.Add(info);
         Reading r;List<Adapter> list;lock(gate){r=reading;list=new List<Adapter>(adapters);}
         var statusItem=MenuItem(r.AdapterName,"status",false);statusItem.Enabled=false;menu.Items.Add(statusItem);
         menu.Items.Add(new ToolStripSeparator());
@@ -161,8 +161,9 @@ internal sealed class MeterContext : ApplicationContext {
         var smoothing=MenuItem("Усреднение","smoothing");
         foreach(int value in new[]{0,2,3,5,10}){int seconds=value;var item=MenuItem(Ui.Seconds(seconds),"smoothing",false);item.Checked=config.SmoothingSeconds==seconds;item.ToolTipText+="\n"+Ui.T("Текущее значение: ")+Ui.Seconds(seconds);item.Click+=(s,e)=>{config.SmoothingSeconds=seconds;Save();};smoothing.DropDownItems.Add(item);}menu.Items.Add(smoothing);
         var graph=MenuItem("Фоновый график","graphEnabled");graph.Checked=config.GraphEnabled;graph.Click+=(s,e)=>{config.GraphEnabled=!config.GraphEnabled;Save();};menu.Items.Add(graph);
-        var resize=MenuItem("Изменять ширину","resize");resize.Checked=config.ResizeEnabled;resize.Click+=(s,e)=>{config.ResizeEnabled=!config.ResizeEnabled;Save();};menu.Items.Add(resize);
-        var reset=MenuItem("Сбросить ширину","resetWidth");reset.Click+=(s,e)=>{config.PanelWidth=0;resizedPlacement=null;Save();};menu.Items.Add(reset);
+        Placement layout;lock(gate)layout=placement;bool vertical=layout!=null&&layout.Vertical;
+        var resize=MenuItem(vertical?"Изменять высоту":"Изменять ширину",vertical?"resizeHeight":"resize");resize.Checked=config.ResizeEnabled;resize.Click+=(s,e)=>{config.ResizeEnabled=!config.ResizeEnabled;Save();};menu.Items.Add(resize);
+        var reset=MenuItem(vertical?"Сбросить высоту":"Сбросить ширину",vertical?"resetHeight":"resetWidth");reset.Click+=(s,e)=>{if(vertical)config.PanelHeight=0;else config.PanelWidth=0;resizedPlacement=null;Save();};menu.Items.Add(reset);
         var languages=MenuItem("Язык","language");string[] codes={"auto","ru","en"};string[] names={Ui.T("Автоматически (Windows)"),"Русский","English"};
         for(int i=0;i<codes.Length;i++){string code=codes[i];var item=MenuItem(names[i],"language",false);item.Checked=config.Language==code;item.Click+=(s,e)=>{menu.Close();config.Language=code;Save();};languages.DropDownItems.Add(item);}menu.Items.Add(languages);
         var settings=MenuItem("Настройки…","settings");settings.Click+=(s,e)=>OpenSettings();menu.Items.Add(settings);
@@ -176,8 +177,8 @@ internal sealed class MeterContext : ApplicationContext {
         if(phase==ResizePhase.Cancel){resizedPlacement=null;needsRedraw=true;layoutTimer.Change(0,1000);return;}
         Placement current;lock(gate)current=placement;
         if(current==null||!current.Safe)return;
-        resizedPlacement=current.WithWidth((int)Math.Round(dip*current.Dpi/96.0));needsRedraw=true;
-        if(phase==ResizePhase.Commit){config.PanelWidth=ResizeMath.ToDip(resizedPlacement.Width,current.Dpi);lock(gate)placement=resizedPlacement;resizedPlacement=null;Save();}
+        resizedPlacement=current.WithExtent((int)Math.Round(dip*current.Dpi/96.0));needsRedraw=true;
+        if(phase==ResizePhase.Commit){if(current.Vertical)config.PanelHeight=ResizeMath.ToDip(resizedPlacement.Height,current.Dpi);else config.PanelWidth=ResizeMath.ToDip(resizedPlacement.Width,current.Dpi);lock(gate)placement=resizedPlacement;resizedPlacement=null;Save();}
         Tick();
     }
     public void OpenSettings(){

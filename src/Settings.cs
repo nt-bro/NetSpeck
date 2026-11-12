@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Globalization;
 using System.Text;
@@ -9,7 +9,7 @@ internal sealed class Settings {
     public string AdapterId="";public bool Bits;public int FontSize=9,Interval=1000;
     public string Language="auto";
     public string IconId="flows";
-    public string FontName="Segoe UI";public int FontStyle=0,PanelWidth=0;public bool FontForUi=false,ResizeEnabled=false;
+    public string FontName="Segoe UI";public int FontStyle=0,PanelWidth=0,PanelHeight=0;public bool FontForUi=false,ResizeEnabled=false;
     public int SmoothingSeconds=3;
     public bool GraphEnabled=false,GraphAutoScale=true,GraphFill=true;
     public double GraphSmoothingSeconds=0.6;
@@ -32,6 +32,7 @@ internal sealed class Settings {
             if(k=="FontName"&&v.Length>0&&v.Length<=128)s.FontName=v;
             if(k=="FontStyle"&&int.TryParse(v,out n)&&n>=0&&n<=3)s.FontStyle=n;
             if(k=="FontForUi")s.FontForUi=v=="1";
+            if(k=="PanelHeight"&&int.TryParse(v,out n)&&(n==0||n>=60&&n<=1200))s.PanelHeight=n;
             if(k=="PanelWidth"&&int.TryParse(v,out n)&&(n==0||n>=60&&n<=1200))s.PanelWidth=n;
             if(k=="ResizeEnabled")s.ResizeEnabled=v=="1";
             if(k=="Interval"&&int.TryParse(v,out n)&&(n==500||n==1000||n==2000))s.Interval=n;
@@ -56,7 +57,7 @@ internal sealed class Settings {
         string text="Adapter="+AdapterId+"\r\nBits="+(Bits?1:0)+"\r\nFont="+FontSize+"\r\nInterval="+Interval+"\r\n";
         text+="Language="+Language+"\r\n";
         text+="Icon="+IconId+"\r\n";
-        text+="FontName="+FontName.Replace("\r","").Replace("\n","")+"\r\nFontStyle="+FontStyle+"\r\nFontForUi="+(FontForUi?1:0)+"\r\nPanelWidth="+PanelWidth+"\r\nResizeEnabled="+(ResizeEnabled?1:0)+"\r\n";
+        text+="FontName="+FontName.Replace("\r","").Replace("\n","")+"\r\nFontStyle="+FontStyle+"\r\nFontForUi="+(FontForUi?1:0)+"\r\nPanelWidth="+PanelWidth+"\r\nPanelHeight="+PanelHeight+"\r\nResizeEnabled="+(ResizeEnabled?1:0)+"\r\n";
         text+="Smoothing="+SmoothingSeconds+"\r\nGraph="+(GraphEnabled?1:0)+"\r\nGraphSeconds="+GraphSeconds+"\r\nGraphOpacity="+GraphOpacity+"\r\n";
         text+="GraphAutoScale="+(GraphAutoScale?1:0)+"\r\nGraphFill="+(GraphFill?1:0)+"\r\nGraphRaw="+(GraphRaw?1:0)+"\r\nGraphFps="+GraphFps+"\r\n";
         text+="GraphSmoothing="+GraphSmoothingSeconds.ToString(CultureInfo.InvariantCulture)+"\r\n";

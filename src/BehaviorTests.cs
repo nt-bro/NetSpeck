@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
@@ -106,6 +106,26 @@ class BehaviorTests {
    Check(!meter.IsResizing&&afterRect.Right==beforeRect.Right&&Math.Abs(afterRect.Width-target)<=2,"mouse drag resizes only left edge and preserves right anchor; before="+beforeRect+" after="+afterRect+" target="+target+" layout="+placement.X+","+placement.Width);
    Check(Settings.Load().PanelWidth==ResizeMath.ToDip(target,placement.Dpi),"mouse-up persists resized logical width");
    Item(menu,"Сбросить ширину").PerformClick();
+   using(var host=new Form())using(var popup=new Form()){
+    popup.Owner=host;IntPtr hostHandle=host.Handle,popupHandle=popup.Handle;
+    using(var child=new MeterWindow(hostHandle)){
+     Check(Native.GetAncestor(child.Handle,2)==hostHandle&&Native.GetAncestor(popupHandle,2)!=hostHandle,"native root distinguishes a taskbar child from an owned popup");
+     var side=new Placement{Bar=hostHandle,Rect=new Native.Rect{Left=0,Top=0,Right=72,Bottom=2160},Dpi=placement.Dpi,Vertical=true,Y=400,Width=72,Height=160,MinimumY=200,MinimumHeight=110,Safe=true};
+     child.Render(side,new Reading{Connected=true,Down=1000000,Up=200000},widthConfig,true,new SpeedPoint[0],0);
+     int persistedHeight=0;child.WidthRequested+=(dip,phase)=>{if(phase!=ResizePhase.Cancel){side=side.WithExtent((int)Math.Round(dip*side.Dpi/96.0));child.Render(side,new Reading(),widthConfig,true,new SpeedPoint[0],0);if(phase==ResizePhase.Commit)persistedHeight=dip;}};
+     Native.Rect beforeSide;Native.GetWindowRect(child.Handle,out beforeSide);
+     Check(!child.BeginResize(15,false)&&child.BeginResize(2,false),"vertical resize starts only at top edge");child.MoveResize(-40);child.EndResize();
+     Native.Rect afterSide;Native.GetWindowRect(child.Handle,out afterSide);
+     Check(afterSide.Bottom==beforeSide.Bottom&&afterSide.Width==beforeSide.Width&&afterSide.Height>beforeSide.Height,"vertical HWND resize preserves bottom edge and taskbar thickness");
+     Check(persistedHeight==ResizeMath.ToDip(afterSide.Height,side.Dpi),"vertical resize commits logical height");
+    }
+   }
+   var originalPlacement=(Placement)Field(context,"placement");
+   var sideMenu=new Placement{Vertical=true,Safe=true};typeof(MeterContext).GetField("placement",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(context,sideMenu);Call(context,"BuildMenu");
+   Check(Item(menu,"Изменять высоту").ToolTipText.Length>0&&Item(menu,"Сбросить высоту").ToolTipText.Length>0,"vertical menu uses height labels and tooltips");
+   widthConfig.PanelHeight=140;Call(context,"Save");Check(Settings.Load().PanelHeight==140,"vertical height persists independently");
+   int keptWidth=widthConfig.PanelWidth;Item(menu,"Сбросить высоту").PerformClick();Check(Settings.Load().PanelHeight==0&&Settings.Load().PanelWidth==keptWidth,"resetting vertical height preserves horizontal width");
+   typeof(MeterContext).GetField("placement",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(context,originalPlacement);Call(context,"BuildMenu");
    string fixture=Path.Combine(Path.GetTempPath(),"NetSpeck-font-test-"+Guid.NewGuid().ToString("N"));
    var imported=AppFonts.Import(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts),"segoeui.ttf"),fixture);
    Check(imported.Length>0&&Directory.GetFiles(fixture).Length==1,"own TTF file imported privately without installation");

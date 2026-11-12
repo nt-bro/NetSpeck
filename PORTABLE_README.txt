@@ -1,4 +1,4 @@
-NetSpeck 1.0.0 — Windows 11 public preview
+NetSpeck 1.0.1 — Windows 11 public preview
 https://github.com/nt-bro/NetSpeck
 
 ENGLISH

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -114,8 +114,23 @@ internal static class RenderChecks {
         }
         var input=new List<PointF>{new PointF(0,40),new PointF(10,10),new PointF(20,40)};var curve=MeterRenderer.SmoothLine(input);
         if(curve.Count<=input.Count)throw new Exception("Graph curve was not interpolated");
+        var side=new Placement{Bar=new IntPtr(1),Rect=new Native.Rect{Left=0,Top=0,Right=72,Bottom=2160},Dpi=144,Vertical=true,Y=1500,Width=72,Height=150,MinimumY=900,MinimumHeight=114,Safe=true};
+        var resized=side.WithExtent(240);
+        if(resized.Y+resized.Height!=side.Y+side.Height||resized.Width!=72||resized.Height!=240)throw new Exception("Vertical resize changed the bottom anchor or width");
+        if(side.WithExtent(2000).Y!=900||side.WithExtent(1).Height!=114)throw new Exception("Vertical resize crossed occupied space or minimum height");
+        var moved=(Placement)typeof(object).GetMethod("MemberwiseClone",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(side,null);moved.Rect.Left=100;
+        if(side.SameBar(moved))throw new Exception("Stale placement survived a taskbar move");
+        int verticalFrames=0;
+        foreach(int dpi in new[]{96,120,144,192})foreach(int width in new[]{40,48,64})foreach(bool bits in new[]{false,true})foreach(bool dark in new[]{false,true}){
+            var p=new Placement{Dpi=(uint)dpi,Vertical=true,Width=width*dpi/96,Height=108*dpi/96,Safe=true};
+            var settings=new Settings{FontSize=10,Bits=bits,GraphEnabled=true,ResizeEnabled=true};
+            using(var bitmap=MeterRenderer.Draw(p,new Reading{Connected=true,Down=999000000,Up=1234567},settings,dark,new[]{new SpeedPoint{Time=0,Down=500000000},new SpeedPoint{Time=30,Down=999000000}},30)){
+                if(bitmap.Width!=p.Width||bitmap.Height!=p.Height||FirstInk(bitmap)<0)throw new Exception("Vertical rendering failed");
+                if(dpi==144&&width==48&&dark&&!bits)bitmap.Save(Path.Combine(folder,"vertical-indicator-preview.png"));
+            }verticalFrames++;
+        }
         PreviewAndBenchmark(folder);
-        return frames+" render cases passed (4 DPI, 5 fonts, both themes and units); left-anchored bold arrows, adjustable spacing, smooth curves and 10% alpha fade verified.\n";
+        return verticalFrames+" vertical render cases and resize bounds passed.\n"+frames+" render cases passed (4 DPI, 5 fonts, both themes and units); left-anchored bold arrows, adjustable spacing, smooth curves and 10% alpha fade verified.\n";
     }
     static void PreviewAndBenchmark(string folder){
         var sampler=new TrafficSampler();var old=new List<SpeedPoint>();ulong bytes=0;

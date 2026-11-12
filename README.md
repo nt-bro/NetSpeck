@@ -4,13 +4,13 @@
   <p><img src="docs/images/indicator.png" width="264" height="88" alt="NetSpeck panel preview with download and upload speeds"></p>
   <p><sub>App-rendered preview · sample traffic</sub></p>
   <p>
-    <a href="https://github.com/nt-bro/NetSpeck/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/preview-v1.0.0-38bdf8?style=flat-square" alt="Public preview v1.0.0"></a>
+    <a href="https://github.com/nt-bro/NetSpeck/releases/tag/v1.0.1"><img src="https://img.shields.io/badge/preview-v1.0.1-38bdf8?style=flat-square" alt="Public preview v1.0.1"></a>
     <img src="https://img.shields.io/badge/Windows-11%20x64-0078D4?style=flat-square" alt="Windows 11 x64">
     <a href="https://github.com/nt-bro/NetSpeck/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/nt-bro/NetSpeck/build.yml?branch=main&amp;style=flat-square&amp;label=build" alt="Build status"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-34d399?style=flat-square" alt="MIT license"></a>
   </p>
   <p>
-    <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.0.0/NetSpeck-v1.0.0-win-x64.zip"><strong>⬇️ Download ZIP</strong></a>
+    <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.0.1/NetSpeck-v1.0.1-win-x64.zip"><strong>⬇️ Download ZIP</strong></a>
     &nbsp; · &nbsp; <a href="README.ru.md">🌐 Русский</a>
     &nbsp; · &nbsp; <a href="https://github.com/nt-bro/NetSpeck/issues/new/choose">🐞 Report a bug</a>
   </p>
@@ -22,7 +22,7 @@
 ## 🚀 Download and run
 
 1. Open [Releases](https://github.com/nt-bro/NetSpeck/releases).
-2. Download `NetSpeck-v1.0.0-win-x64.zip` from the release assets. GitHub's automatic **Source code** archives contain source files, not the ready-to-run app.
+2. Download `NetSpeck-v1.0.1-win-x64.zip` from the release assets. GitHub's automatic **Source code** archives contain source files, not the ready-to-run app.
 3. Extract the archive and run `NetSpeck.exe`. No installation or administrator rights are required. The portable EXE is unsigned.
 4. Right-click the indicator or its tray icon to open settings. Starting the app again also opens settings.
 
@@ -35,7 +35,7 @@ Close the app before replacing its EXE during an update. If startup is enabled a
 | ⬇️ **Download & upload** | Two speed values, in decimal bytes or bits per second. |
 | 🎚️ **Steadier numbers** | Independent averaging: off or 2 / 3 / 5 / 10 seconds. Number refresh: 0.5 / 1 / 2 seconds. |
 | 📈 **Optional graph** | 15–120 seconds of history, 5–30 fps, separate 0–5 second smoothing, colors, opacity, line width, scale and fill. A 10% fade softens each end. |
-| ↔️ **Panel width** | Enable **Resize panel width** and drag the left edge. The right edge stays fixed; **Reset panel width** restores automatic sizing. |
+| ↔️ **Panel width** | Enable **Resize panel width** and drag the left edge. The right edge stays fixed; **Reset panel width** restores automatic sizing. On a vertical taskbar, use height resizing from the top edge. On a vertical taskbar, the menu changes to height resizing from the top edge. |
 | 🔤 **Fonts** | Installed families and styles, preview and private TTF/TTC/compatible OTF imports. |
 | 🎨 **Icons** | Flows, Speedometer or your own ICO/PNG files for the tray and app windows. |
 | 🔄 **Startup & recovery** | Optional startup at sign-in and indicator recreation after Explorer recreates the taskbar. |
@@ -74,7 +74,7 @@ NetSpeck reads local 64-bit interface byte counters. It does not download a test
 
 Automatic mode selects one adapter using the system internet route. VPN and physical-interface traffic are not added together. With split tunneling, select an adapter manually if needed. Route lookup sends no packets.
 
-Only the primary horizontal taskbar is supported. The app uses available space; it does not reserve an official taskbar slot. If no safe free space can be found, the indicator hides temporarily and reports why in the tray/settings.
+The primary taskbar is supported. Vertical placement is experimental: it uses a compact stacked layout and a separate height setting, adjusted by dragging the top edge. It has been tested with synthetic geometry and native child windows, but not yet with an actual vertical taskbar. The app uses available space; it does not reserve an official taskbar slot. If no safe free space can be found, the indicator hides temporarily and reports why in the tray/settings.
 
 ## 🔒 Preferences and privacy
 
@@ -92,7 +92,7 @@ Requires Windows x64 and its .NET Framework 4.8 compiler. No NuGet packages or .
 powershell -NoProfile -File .\build.ps1
 ```
 
-This creates `NetSpeck.exe` and runs **66 offline checks**. Close any running copy before rebuilding. To create a portable ZIP and SHA-256 checksum:
+This creates `NetSpeck.exe` and runs **73 offline checks**. Close any running copy before rebuilding. To create a portable ZIP and SHA-256 checksum:
 
 ```powershell
 powershell -NoProfile -File .\scripts\package.ps1

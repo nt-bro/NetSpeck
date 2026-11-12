@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -8,6 +8,15 @@ class Tests {
     static void Check(bool result,string name){if(!result)throw new Exception("FAIL: "+name);count++;Console.WriteLine("PASS: "+name);}
     static bool Near(double a,double b){return Math.Abs(a-b)<0.0001;}
     static int Main(){try{
+        int start,end;var horizontal=new Native.Rect{Left=-1920,Top=1032,Right=0,Bottom=1080};
+        Check(TaskbarGeometry.Project(horizontal,false,-1500,1032,48,48,out start,out end)&&start==420&&end==468,"horizontal UIA bounds use taskbar-relative coordinates");
+        Check(!TaskbarGeometry.Project(horizontal,false,-1600,860,350,180,out start,out end),"popup overlapping taskbar edge does not reserve space");
+        Check(!TaskbarGeometry.Project(horizontal,false,-1500,1080,48,48,out start,out end),"off-taskbar control ignored");
+        var vertical=new Native.Rect{Left=-72,Top=-1080,Right=0,Bottom=0};
+        Check(TaskbarGeometry.Project(vertical,true,-72,-900,72,48,out start,out end)&&start==180&&end==228,"vertical UIA projects along Y on a negative-coordinate monitor");
+        Check(!TaskbarGeometry.Project(vertical,true,-80,-900,350,180,out start,out end),"side flyout does not reserve vertical space");
+        Check(!TaskbarGeometry.Project(vertical,true,Double.NaN,0,20,20,out start,out end),"invalid UIA coordinates ignored");
+        Check(TaskbarGeometry.Project(vertical,true,-72,-1090,72,30,out start,out end)&&start==0&&end==20,"partially visible control is clipped to taskbar axis");
         string fixture=Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"migration-"+Guid.NewGuid().ToString("N"));
         string legacyFolder=Path.Combine(fixture,"old"),migratedFolder=Path.Combine(fixture,"new");
         try {

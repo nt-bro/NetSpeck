@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.1 — public preview — 2026-11-12
+
+- Exclude popup menus and owned windows from taskbar free-space calculation to prevent sideways jumps when opening a menu nearby.
+- Experimental vertical taskbar layout with stacked values and separate top-edge height resizing. Horizontal width is preserved independently.
+- Discard cached resize placement when taskbar geometry or DPI changes.
+- Regression coverage: 73 offline checks, 119 behavior checks, 80 horizontal and 48 vertical render cases. Actual vertical taskbar integration remains unverified.
+
 ## 1.0.0 — public preview — 2026-11-12
 
 First public release under the NetSpeck name. Existing development-version preferences, imported fonts/icons and enabled startup are migrated automatically.

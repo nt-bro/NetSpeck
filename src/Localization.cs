@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -46,7 +46,7 @@ internal static class Ui {
         {" (свой)"," (custom)"},{" (отключён)"," (disconnected)"},{"Нет подключения","No connection"},{"Выбранный адаптер отключён","Selected adapter is disconnected"},{"Ошибка чтения сети","Network read error"},
         {"Ожидание панели задач","Waiting for the taskbar"},{"Неподдерживаемая геометрия панели задач","Unsupported taskbar layout"},{"Не удалось проверить свободное место панели задач","Could not check free taskbar space"},
         {"Встроен в панель задач","Embedded in the taskbar"},{"Недостаточно места — индикатор временно скрыт","Not enough space — indicator temporarily hidden"},{"Не удалось проверить расположение панели задач","Could not check the taskbar layout"},{"Подготовка…","Preparing…"},
-        {"NetSpeck — запуск","NetSpeck — Starting"},{"Фоновый график","Background graph"},{"Изменять ширину","Resize panel width"},{"Сбросить ширину","Reset panel width"},{"Настройки…","Settings…"},{"Выход","Exit"},{"Текущее значение: ","Current value: "}
+        {"NetSpeck — запуск","NetSpeck — Starting"},{"Фоновый график","Background graph"},{"Изменять ширину","Resize panel width"},{"Сбросить ширину","Reset panel width"},{"Изменять высоту","Resize panel height"},{"Сбросить высоту","Reset panel height"},{"Настройки…","Settings…"},{"Выход","Exit"},{"Текущее значение: ","Current value: "}
     };
     static readonly Dictionary<string,string[]> Hints=new Dictionary<string,string[]>{
         {"iconChoice",new[]{"Выберите «Потоки» (вариант 1), «Спидометр» (вариант 3) или добавленную иконку. Меняет значок в трее и окнах приложения после «Применить». Выбор сохраняется. Если свой файл недоступен, используется «Потоки».","Choose Flows (option 1), Speedometer (option 3) or an imported icon. Apply changes the tray and app-window icons and saves your selection. If a custom file is unavailable, Flows is used."}},
@@ -84,6 +84,8 @@ internal static class Ui {
         {"apply",new[]{"Сохранить параметры всех вкладок и сразу обновить индикатор. Новый язык применяется без перезапуска; сглаживание пересчитывает всю видимую историю графика.","Save all tabs and update the indicator immediately. Language changes need no restart; smoothing recalculates the visible graph history."}},
         {"close",new[]{"Закрыть настройки. Не применённые изменения не сохраняются; индикатор продолжает работать в панели задач.","Close settings. Unapplied changes are not saved; the taskbar indicator keeps running."}},
         {"resize",new[]{"Включить изменение ширины перетаскиванием левого края индикатора. Правый край и размер текста сохраняются. Большая ширина увеличивает промежуток между стрелками и числами. Выключите после настройки, чтобы не изменить ширину случайно.","Enable dragging the indicator's left edge to resize it. The right edge and text size stay fixed. A wider panel increases the gap between arrows and numbers. Turn off afterwards to avoid accidental resizing."}},
+        {"resizeHeight",new[]{"Включить изменение высоты перетаскиванием верхнего края индикатора на вертикальной панели задач. Нижний край остаётся на месте. Высота сохраняется отдельно от ширины горизонтального индикатора.","Enable dragging the top edge on a vertical taskbar. The bottom edge stays fixed. Height is saved separately from the horizontal indicator's width."}},
+        {"resetHeight",new[]{"Вернуть автоматическую высоту вертикального индикатора по размеру текста.","Restore automatic height for the vertical indicator based on the text size."}},
         {"resetWidth",new[]{"Вернуть автоматическую ширину по текущему шрифту и размеру текста вместо ширины, выбранной перетаскиванием.","Restore automatic width based on the current font and text size, replacing the width set by dragging."}},
         {"settings",new[]{"Открыть параметры чисел, графика, шрифтов и языка. Чтобы узнать действие параметра, наведите на его название или поле.","Open settings for numbers, graph, fonts and language. Hover over a setting label or field to learn what it changes."}},
         {"exit",new[]{"Завершить NetSpeck и убрать индикатор с панели задач. Сохранённые настройки и включённый автозапуск остаются.","Exit NetSpeck and remove its taskbar indicator. Saved preferences and enabled startup remain."}},

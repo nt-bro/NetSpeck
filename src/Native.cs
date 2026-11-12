@@ -14,6 +14,7 @@ internal static class Native {
     [DllImport("user32.dll", CharSet=CharSet.Unicode)] internal static extern IntPtr FindWindow(string cls,string title);
     [DllImport("user32.dll", CharSet=CharSet.Unicode)] internal static extern IntPtr FindWindowEx(IntPtr parent,IntPtr after,string cls,string title);
     [DllImport("user32.dll")] internal static extern IntPtr GetParent(IntPtr window);
+    [DllImport("user32.dll")] internal static extern IntPtr GetAncestor(IntPtr window,uint flags);
     [DllImport("user32.dll")] internal static extern bool IsWindow(IntPtr window);
     [DllImport("user32.dll")] internal static extern bool IsWindowVisible(IntPtr window);
     [DllImport("user32.dll")] internal static extern IntPtr SetCapture(IntPtr window);

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -22,6 +22,7 @@ internal static class MeterRenderer {
             g.TextRenderingHint=TextRenderingHint.AntiAliasGridFit;
             float scale=p.Dpi/96f;
             float pixels=Math.Min(s.FontSize*96f/72f*scale,(p.Height-4*scale)/2.35f);
+            if(p.Vertical)DrawVertical(g,p,r,s,dark,scale);else{
             using(var font=AppFonts.Indicator(s,pixels))
             using(var arrowFont=AppFonts.Arrow(s,pixels))
             using(var brush=new SolidBrush(dark?Color.FromArgb(245,245,245):Color.FromArgb(24,24,24)))
@@ -39,9 +40,29 @@ internal static class MeterRenderer {
                 g.DrawString(down,font,brush,new RectangleF(valueLeft,0,Math.Max(1,p.Width-valueLeft-5*scale),row),format);
                 g.DrawString(up,font,brush,new RectangleF(valueLeft,row,Math.Max(1,p.Width-valueLeft-5*scale),row),format);
             }
-            if(s.ResizeEnabled)using(var grip=new Pen(Color.FromArgb(110,dark?Color.LightGray:Color.DimGray),Math.Max(1,scale)))g.DrawLine(grip,scale,12*scale,scale,p.Height-12*scale);
+            }
+            if(s.ResizeEnabled)using(var grip=new Pen(Color.FromArgb(110,dark?Color.LightGray:Color.DimGray),Math.Max(1,scale))){if(p.Vertical)g.DrawLine(grip,8*scale,scale,p.Width-8*scale,scale);else g.DrawLine(grip,scale,12*scale,scale,p.Height-12*scale);}
         }
         return bitmap;
+    }
+    static void DrawVertical(Graphics g,Placement p,Reading r,Settings s,bool dark,float scale){
+        float row=p.Height/2f,arrowWidth=12*scale,pixels=Math.Max(1,Math.Min(s.FontSize*96f/72f*scale,(row-6*scale)/2.5f));
+        string[] values={r.Connected?Rates.Format(r.Down,s.Bits):"—",r.Connected?Rates.Format(r.Up,s.Bits):"—"};
+        float available=Math.Max(1,p.Width-arrowWidth-8*scale);
+        // Fit both values before drawing so their font sizes always match.
+        using(var probe=AppFonts.Indicator(s,pixels))foreach(string value in values){string number=value.Split(' ')[0];float measured=g.MeasureString(number,probe,10000,StringFormat.GenericTypographic).Width;pixels=Math.Min(pixels,probe.Size*available/Math.Max(1,measured));}
+        using(var font=AppFonts.Indicator(s,pixels))using(var unit=AppFonts.Indicator(s,pixels*0.78f))using(var arrow=AppFonts.Arrow(s,pixels))
+        using(var brush=new SolidBrush(dark?Color.FromArgb(245,245,245):Color.FromArgb(24,24,24)))
+        using(var format=new StringFormat(StringFormat.GenericTypographic)){
+            format.FormatFlags=StringFormatFlags.NoWrap;format.Alignment=StringAlignment.Far;format.LineAlignment=StringAlignment.Center;
+            for(int i=0;i<2;i++){
+                int split=values[i].LastIndexOf(' ');string number=split<0?values[i]:values[i].Substring(0,split),suffix=split<0?"":values[i].Substring(split+1);
+                float top=i*row+(row-pixels*2.5f)/2;
+                using(var left=new StringFormat(format)){left.Alignment=StringAlignment.Near;DrawArrow(g,i==0?"↓":"↑",arrow,brush,new RectangleF(3*scale,top,arrowWidth,pixels*1.35f),left,scale);}
+                g.DrawString(number,font,brush,new RectangleF(arrowWidth+4*scale,top,available,pixels*1.35f),format);
+                g.DrawString(suffix,unit,brush,new RectangleF(3*scale,top+pixels*1.35f,p.Width-7*scale,pixels*1.15f),format);
+            }
+        }
     }
     internal static void DrawArrow(Graphics g,string text,Font font,Brush brush,RectangleF rect,StringFormat format,float scale){
         using(var path=new GraphicsPath())using(var stroke=new Pen(brush,0.25f*scale)){

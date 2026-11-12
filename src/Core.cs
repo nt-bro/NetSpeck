@@ -152,6 +152,20 @@ internal static class ResizeMath {
     public static int WidthFromLeft(int right,int mouseX,int minimum,int maximum){return Math.Max(minimum,Math.Min(maximum,right-mouseX));}
     public static int ToDip(int pixels,uint dpi){return (int)Math.Round(pixels*96.0/Math.Max(1,dpi));}
 }
+internal static class TaskbarGeometry {
+    // UIA can expose owned flyouts as taskbar descendants. Only controls whose
+    // centre lies within the taskbar's thickness reserve space on its axis.
+    public static bool Project(Native.Rect bar,bool vertical,double left,double top,double width,double height,out int start,out int end){
+        start=end=0;
+        if(width<=0||height<=0||Double.IsNaN(left+top+width+height)||Double.IsInfinity(left+top+width+height))return false;
+        double cross=vertical?left+width/2:top+height/2;
+        if(cross<(vertical?bar.Left:bar.Top)||cross>=(vertical?bar.Right:bar.Bottom))return false;
+        double origin=vertical?bar.Top:bar.Left,extent=vertical?bar.Height:bar.Width;
+        double first=(vertical?top:left)-origin,last=first+(vertical?height:width);
+        if(last<=0||first>=extent)return false;
+        start=(int)Math.Floor(Math.Max(0,first));end=(int)Math.Ceiling(Math.Min(extent,last));return end>start;
+    }
+}
 internal static class Rates {
     public static string Format(double bytes,bool bits) {
         double value=Math.Max(0,double.IsNaN(bytes)||double.IsInfinity(bytes)?0:bytes)*(bits?8:1);
