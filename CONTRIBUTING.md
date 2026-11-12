@@ -23,3 +23,7 @@ Use the issue template and include the Windows build, scale, taskbar layout, sel
 Keep changes focused and preserve independent numeric averaging, graph smoothing, user preferences and the taskbar child-window behavior. Check both interface languages when changing UI text or layout. Update `VERSION`, assembly metadata, release notes and download links when preparing a new version.
 
 Contributions are provided under the repository's MIT license.
+
+## Publishing a release
+
+Publish a GitHub release with a tag that matches `VERSION` (for example, `v1.6.0`). Mark preview builds as pre-releases. The release workflow checks out that tag, compiles the app, runs the offline checks, and attaches the portable ZIP and SHA-256 checksum. Wait for the workflow to succeed before sharing the download. Its write permission is limited to repository contents and is used to upload release assets.
