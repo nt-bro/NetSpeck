@@ -4,13 +4,13 @@
   <p><img src="docs/images/indicator.png" width="264" height="88" alt="NetSpeck panel preview with download and upload speeds"></p>
   <p><sub>App-rendered preview · sample traffic</sub></p>
   <p>
-    <a href="https://github.com/nt-bro/NetSpeck/releases/tag/v1.6.1"><img src="https://img.shields.io/badge/preview-v1.6.1-38bdf8?style=flat-square" alt="Public preview v1.6.1"></a>
+    <a href="https://github.com/nt-bro/NetSpeck/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/preview-v1.0.0-38bdf8?style=flat-square" alt="Public preview v1.0.0"></a>
     <img src="https://img.shields.io/badge/Windows-11%20x64-0078D4?style=flat-square" alt="Windows 11 x64">
     <a href="https://github.com/nt-bro/NetSpeck/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/nt-bro/NetSpeck/build.yml?branch=main&amp;style=flat-square&amp;label=build" alt="Build status"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-34d399?style=flat-square" alt="MIT license"></a>
   </p>
   <p>
-    <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.6.1/NetSpeck-v1.6.1-win-x64.zip"><strong>⬇️ Download ZIP</strong></a>
+    <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.0.0/NetSpeck-v1.0.0-win-x64.zip"><strong>⬇️ Download ZIP</strong></a>
     &nbsp; · &nbsp; <a href="README.ru.md">🌐 Русский</a>
     &nbsp; · &nbsp; <a href="https://github.com/nt-bro/NetSpeck/issues/new/choose">🐞 Report a bug</a>
   </p>
@@ -22,7 +22,7 @@
 ## 🚀 Download and run
 
 1. Open [Releases](https://github.com/nt-bro/NetSpeck/releases).
-2. Download `NetSpeck-v1.6.1-win-x64.zip` from the release assets. GitHub's automatic **Source code** archives contain source files, not the ready-to-run app.
+2. Download `NetSpeck-v1.0.0-win-x64.zip` from the release assets. GitHub's automatic **Source code** archives contain source files, not the ready-to-run app.
 3. Extract the archive and run `NetSpeck.exe`. No installation or administrator rights are required. The portable EXE is unsigned.
 4. Right-click the indicator or its tray icon to open settings. Starting the app again also opens settings.
 

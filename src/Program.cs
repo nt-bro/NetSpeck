@@ -145,7 +145,7 @@ internal sealed class MeterContext : ApplicationContext {
     }
     void BuildMenu() {
         menu.Items.Clear();
-        var info=MenuItem("NetSpeck 1.6.1","version");info.Enabled=false;menu.Items.Add(info);
+        var info=MenuItem("NetSpeck 1.0.0","version");info.Enabled=false;menu.Items.Add(info);
         Reading r;List<Adapter> list;lock(gate){r=reading;list=new List<Adapter>(adapters);}
         var statusItem=MenuItem(r.AdapterName,"status",false);statusItem.Enabled=false;menu.Items.Add(statusItem);
         menu.Items.Add(new ToolStripSeparator());

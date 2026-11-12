@@ -1,16 +1,16 @@
 <div align="center">
   <p><strong>Live download &amp; upload speed in your Windows 11 taskbar.</strong></p>
-  <p><img src="https://raw.githubusercontent.com/nt-bro/NetSpeck/v1.6.1/docs/images/indicator.png" width="264" height="88" alt="NetSpeck panel preview"></p>
+  <p><img src="https://raw.githubusercontent.com/nt-bro/NetSpeck/v1.0.0/docs/images/indicator.png" width="264" height="88" alt="NetSpeck panel preview"></p>
   <p><sub>App-rendered preview · sample traffic</sub></p>
   <p>
-    <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.6.1/NetSpeck-v1.6.1-win-x64.zip"><strong>⬇️ Download NetSpeck 1.6.1 · ZIP</strong></a>
+    <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.0.0/NetSpeck-v1.0.0-win-x64.zip"><strong>⬇️ Download NetSpeck 1.0.0 · ZIP</strong></a>
     &nbsp; · &nbsp; <a href="https://github.com/nt-bro/NetSpeck/blob/main/README.ru.md">🌐 Описание на русском</a>
   </p>
 </div>
 
 ## 🚀 Get started
 
-1. Download **NetSpeck-v1.6.1-win-x64.zip** from the assets below.
+1. Download **NetSpeck-v1.0.0-win-x64.zip** from the assets below.
 2. Extract it and run **NetSpeck.exe**. No installation or administrator rights are required.
 3. Right-click the indicator or its tray icon to customize it.
 
@@ -30,7 +30,7 @@ The attached **.sha256** file contains the ZIP checksum. GitHub's automatic **So
 
 ### With the background graph
 
-![NetSpeck with a background graph — actual screenshot](https://raw.githubusercontent.com/nt-bro/NetSpeck/v1.6.1/docs/images/taskbar-live.png)
+![NetSpeck with a background graph — actual screenshot](https://raw.githubusercontent.com/nt-bro/NetSpeck/v1.0.0/docs/images/taskbar-live.png)
 
 ### Numbers only
 
@@ -48,7 +48,7 @@ Development checks passed: **66 offline checks · 112 behavior checks · 80 rend
 
 ## 🌐 По-русски
 
-Скачайте **NetSpeck-v1.6.1-win-x64.zip**, распакуйте и запустите **NetSpeck.exe**. Установка и права администратора не нужны.
+Скачайте **NetSpeck-v1.0.0-win-x64.zip**, распакуйте и запустите **NetSpeck.exe**. Установка и права администратора не нужны.
 
 **Фоновый график можно полностью отключить** через ПКМ по индикатору или **«Настройки → График»**, оставив только числа загрузки и отдачи. Усреднение чисел и сглаживание графика настраиваются отдельно; доступны свои шрифты, иконки и изменение ширины перетаскиванием.
 
