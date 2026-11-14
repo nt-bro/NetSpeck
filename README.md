@@ -4,13 +4,13 @@
   <p><img src="docs/images/indicator.png" width="264" height="88" alt="NetSpeck panel preview with download and upload speeds"></p>
   <p><sub>App-rendered preview · sample traffic</sub></p>
   <p>
-    <a href="https://github.com/nt-bro/NetSpeck/releases/tag/v1.0.2"><img src="https://img.shields.io/badge/preview-v1.0.2-38bdf8?style=flat-square" alt="Public preview v1.0.2"></a>
+    <a href="https://github.com/nt-bro/NetSpeck/releases/tag/v1.0.3"><img src="https://img.shields.io/badge/preview-v1.0.3-38bdf8?style=flat-square" alt="Public preview v1.0.3"></a>
     <img src="https://img.shields.io/badge/Windows-11%20x64-0078D4?style=flat-square" alt="Windows 11 x64">
     <a href="https://github.com/nt-bro/NetSpeck/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/nt-bro/NetSpeck/build.yml?branch=main&amp;style=flat-square&amp;label=build" alt="Build status"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-34d399?style=flat-square" alt="MIT license"></a>
   </p>
   <p>
-    <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.0.2/NetSpeck-v1.0.2-win-x64.zip"><strong>⬇️ Download ZIP</strong></a>
+    <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.0.3/NetSpeck-v1.0.3-win-x64.zip"><strong>⬇️ Download ZIP</strong></a>
     &nbsp; · &nbsp; <a href="README.ru.md">🌐 Русский</a>
     &nbsp; · &nbsp; <a href="https://github.com/nt-bro/NetSpeck/issues/new/choose">🐞 Report a bug</a>
   </p>
@@ -22,7 +22,7 @@
 ## 🚀 Download and run
 
 1. Open [Releases](https://github.com/nt-bro/NetSpeck/releases).
-2. Download `NetSpeck-v1.0.2-win-x64.zip` from the release assets. GitHub's automatic **Source code** archives contain source files, not the ready-to-run app.
+2. Download `NetSpeck-v1.0.3-win-x64.zip` from the release assets. GitHub's automatic **Source code** archives contain source files, not the ready-to-run app.
 3. Extract the archive and run `NetSpeck.exe`. No installation or administrator rights are required. The portable EXE is unsigned.
 4. Right-click the indicator or its tray icon to open settings. Starting the app again also opens settings.
 
@@ -107,7 +107,15 @@ Interactive checks require a compatible Windows 11 desktop and an active adapter
 powershell -NoProfile -File .\build.ps1 -Integration -Menus
 ```
 
-These additionally check all four settings tabs in both languages, **80 render cases**, menu/settings behavior and icon imports. They temporarily alter and restore local app preferences. They do not restart Explorer. CI runs only the build and offline checks; a successful CI build is not a compatibility test for its Windows Server runner.
+These additionally check all four settings tabs in both languages, **128 render cases**, menu/settings behavior and icon imports. They temporarily alter and restore local app preferences. They do not restart Explorer. CI runs only the build and offline checks; a successful CI build is not a compatibility test for its Windows Server runner.
+
+Memory regression checks (2,000 live layout scans and 10,000 graph redraws):
+
+```powershell
+powershell -NoProfile -File .\build.ps1 -Memory
+```
+
+CSV measurements are saved in `build/verification`. These tests require a Windows 11 desktop and do not run in headless CI.
 
 </details>
 

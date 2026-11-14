@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.3 — public preview — 2026-11-14
+
+- Fixed long-running memory growth in taskbar layout polling: replaced the managed legacy UI Automation proxy factory with native cached UIA snapshots and explicit COM reference release.
+- Keep automation on one dedicated MTA worker and release its resources when it stops.
+- Added reproducible memory regression checks for 2,000 layout scans and 10,000 graph redraws, plus worker lifetime checks.
+
 ## 1.0.2 — public preview — 2026-11-12
 
 - Keep the last verified indicator position while an Explorer popup temporarily withdraws the taskbar accessibility tree.

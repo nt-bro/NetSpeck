@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Runtime.InteropServices;
-using System.Windows.Automation;
 using System.Windows.Forms;
 
 namespace NetSpeck {
@@ -54,7 +53,7 @@ internal static class TaskbarLayout {
         },IntPtr.Zero);
         return popup;
     }
-    public static Placement Inspect(Settings settings) {
+    public static Placement Inspect(Settings settings,TaskbarAutomation automation=null) {
         var p=new Placement{Bar=Native.FindWindow("Shell_TrayWnd",null),Status="Ожидание панели задач"};
         if(p.Bar==IntPtr.Zero||!Native.GetWindowRect(p.Bar,out p.Rect))return p;
         // UIA and HWND coordinates must use the SAME physical coordinate system.
@@ -71,23 +70,16 @@ internal static class TaskbarLayout {
             if((p.Vertical?p.Rect.Width:p.Rect.Height)<20*scale){p.Status="Неподдерживаемая геометрия панели задач";return p;}
             p.TransientShellUi=ShellUiIsTransient(p.Bar);
             var blocked=new List<int[]>();
-            var root=AutomationElement.FromHandle(p.Bar);
-            var elements=root.FindAll(TreeScope.Descendants,Condition.TrueCondition);
-            int visibleInteractive=0;
-            int ownPid=System.Diagnostics.Process.GetCurrentProcess().Id;
-            foreach(AutomationElement el in elements) {
-                try {
-                    var c=el.Current;if(c.ProcessId==ownPid||c.IsOffscreen)continue;
-                    var t=c.ControlType;
-                    bool interactive=t==ControlType.Button||t==ControlType.ListItem||t==ControlType.SplitButton||t==ControlType.CheckBox||t==ControlType.ComboBox||t==ControlType.Edit||t==ControlType.Hyperlink||t==ControlType.Slider;
-                    if(!interactive)continue;
-                    // GetParent includes owners for popup windows; GA_ROOT does not.
-                    IntPtr hwnd=new IntPtr(c.NativeWindowHandle);
+            int visibleInteractive=0,ownPid=System.Diagnostics.Process.GetCurrentProcess().Id;
+            using(var owned=automation==null?new TaskbarAutomation():null){
+                foreach(var item in (automation??owned).Read(p.Bar)){
+                    if(item.ProcessId==ownPid)continue;
+                    IntPtr hwnd=new IntPtr(item.Window);
                     if(hwnd!=IntPtr.Zero&&Native.GetAncestor(hwnd,2)!=p.Bar)continue;
-                    var r=c.BoundingRectangle;int first,last;
-                    if(r.IsEmpty||!TaskbarGeometry.Project(p.Rect,p.Vertical,r.Left,r.Top,r.Width,r.Height,out first,out last))continue;
+                    int first,last;
+                    if(!TaskbarGeometry.Project(p.Rect,p.Vertical,item.Left,item.Top,item.Width,item.Height,out first,out last))continue;
                     blocked.Add(new[]{first,last});visibleInteractive++;
-                }catch(ElementNotAvailableException){}
+                }
             }
             // Fail closed if the shell's UIA provider cannot expose its layout.
             p.TransientShellUi=p.TransientShellUi||ShellUiIsTransient(p.Bar);

@@ -4,13 +4,13 @@
   <p><img src="docs/images/indicator.png" width="264" height="88" alt="Предпросмотр панельки NetSpeck со скоростью загрузки и отдачи"></p>
   <p><sub>Пример отрисован приложением · демонстрационные значения</sub></p>
   <p>
-    <a href="https://github.com/nt-bro/NetSpeck/releases/tag/v1.0.2"><img src="https://img.shields.io/badge/preview-v1.0.2-38bdf8?style=flat-square" alt="Предварительный выпуск v1.0.2"></a>
+    <a href="https://github.com/nt-bro/NetSpeck/releases/tag/v1.0.3"><img src="https://img.shields.io/badge/preview-v1.0.3-38bdf8?style=flat-square" alt="Предварительный выпуск v1.0.3"></a>
     <img src="https://img.shields.io/badge/Windows-11%20x64-0078D4?style=flat-square" alt="Windows 11 x64">
     <a href="https://github.com/nt-bro/NetSpeck/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/nt-bro/NetSpeck/build.yml?branch=main&amp;style=flat-square&amp;label=build" alt="Статус сборки"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-34d399?style=flat-square" alt="Лицензия MIT"></a>
   </p>
   <p>
-    <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.0.2/NetSpeck-v1.0.2-win-x64.zip"><strong>⬇️ Скачать ZIP</strong></a>
+    <a href="https://github.com/nt-bro/NetSpeck/releases/download/v1.0.3/NetSpeck-v1.0.3-win-x64.zip"><strong>⬇️ Скачать ZIP</strong></a>
     &nbsp; · &nbsp; <a href="README.md">🌐 English</a>
     &nbsp; · &nbsp; <a href="https://github.com/nt-bro/NetSpeck/issues/new/choose">🐞 Сообщить об ошибке</a>
   </p>
@@ -22,7 +22,7 @@
 ## 🚀 Скачать и запустить
 
 1. Откройте [Releases](https://github.com/nt-bro/NetSpeck/releases).
-2. Скачайте `NetSpeck-v1.0.2-win-x64.zip` из списка файлов выпуска. Автоматические архивы **Source code** содержат исходники, а не готовую программу.
+2. Скачайте `NetSpeck-v1.0.3-win-x64.zip` из списка файлов выпуска. Автоматические архивы **Source code** содержат исходники, а не готовую программу.
 3. Распакуйте архив и запустите `NetSpeck.exe`. Установка и права администратора не нужны. EXE не имеет цифровой подписи.
 4. Нажмите ПКМ по индикатору или его значку в трее. Повторный запуск программы тоже открывает настройки.
 
@@ -107,7 +107,15 @@ powershell -NoProfile -File .\scripts\package.ps1
 powershell -NoProfile -File .\build.ps1 -Integration -Menus
 ```
 
-Проверяются четыре вкладки на обоих языках, 80 вариантов отрисовки, меню и импорт значков. Локальные настройки временно меняются и восстанавливаются. Эти проверки не перезапускают Explorer. CI выполняет только сборку и автономные проверки; это не проверка совместимости с серверной ОС runner.
+Проверяются четыре вкладки на обоих языках, 128 вариантов отрисовки, меню и импорт значков. Локальные настройки временно меняются и восстанавливаются. Эти проверки не перезапускают Explorer. CI выполняет только сборку и автономные проверки; это не проверка совместимости с серверной ОС runner.
+
+Проверка накопления памяти: 2000 опросов реальной панели задач и 10 000 перерисовок графика:
+
+```powershell
+powershell -NoProfile -File .\build.ps1 -Memory
+```
+
+Замеры CSV сохраняются в `build/verification`. Нужен рабочий стол Windows 11; эти тесты не запускаются в CI без рабочего стола.
 
 </details>
 

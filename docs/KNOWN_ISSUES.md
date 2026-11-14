@@ -8,6 +8,7 @@ This is a public preview, not a stable compatibility release.
 | Taskbar | Uses an unofficial native child-window integration with the primary taskbar. It occupies free space rather than an officially reserved slot. Windows updates can break compatibility. |
 | Vertical taskbar | Experimental compact layout with independent top-edge height resizing. Geometry, rendering and native child-window resizing are tested; an actual vertical Explorer taskbar has not been verified. |
 | Taskbar context menu | Original right-click scenario was confirmed on the tested system: the indicator remains visible and updates while the menu is open. |
+| Memory | Fixed the legacy managed UIA proxy accumulation in 1.0.3. Live memory checks cover 2,000 layout scans and 10,000 redraws; a multi-day soak of the new version has not been completed. |
 | Explorer restart | Recovery was observed after an actual Explorer restart on the tested system. |
 | Scaling | Actual display scales 100%, 125%, 150% and 200% were checked during development; rendering is also tested at 96/120/144/192 DPI. |
 | Theme and layout | Light/dark render cases pass. Actual theme switching, centered taskbar layout, taskbar overflow, auto-hide, multiple monitors and physical network/VPN transitions are not fully verified. |
@@ -17,7 +18,7 @@ This is a public preview, not a stable compatibility release.
 
 ## Test coverage
 
-The current offline suite has 73 checks. Interactive development checks passed 133 behavior checks, both languages across four settings tabs, and 128 render cases (48 vertical). These checks do not prove compatibility with every Windows 11 build.
+The current offline suite has 73 checks. Interactive development checks passed 137 behavior checks, both languages across four settings tabs, and 128 render cases (48 vertical). These checks do not prove compatibility with every Windows 11 build.
 
 The resize test drives the same pointer handlers on a real HWND without taking global mouse capture. Horizontal and vertical drag handlers preserve their fixed end and clamp to available space.
 

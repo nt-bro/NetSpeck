@@ -63,7 +63,7 @@ internal sealed class MeterContext : ApplicationContext {
     readonly Settings config=Settings.Load();readonly Controller controller;
     readonly object gate=new object();readonly TrafficSampler sampler=new TrafficSampler();
     readonly Stopwatch clock=Stopwatch.StartNew();
-    System.Threading.Timer networkTimer,layoutTimer;
+    System.Threading.Timer networkTimer;LayoutWorker layoutWorker;
     readonly System.Windows.Forms.Timer uiTimer=new System.Windows.Forms.Timer();
     readonly NotifyIcon tray=new NotifyIcon();readonly ContextMenuStrip menu=new ContextMenuStrip();
     Reading reading=new Reading();List<Adapter> adapters=new List<Adapter>();Placement placement,resizedPlacement;
@@ -81,7 +81,7 @@ internal sealed class MeterContext : ApplicationContext {
         menu.Opening+=(s,e)=>{BuildMenu();e.Cancel=false;};
         if(args.Length>1&&args[0]=="--smoke-test")smokeFolder=args[1];
         networkTimer=new System.Threading.Timer(Sample,null,0,GraphMath.PollInterval(config.GraphEnabled,config.Interval));
-        layoutTimer=new System.Threading.Timer(Layout,null,0,1000);
+        layoutWorker=new LayoutWorker(Layout);
         uiTimer.Interval=GraphMath.FrameInterval(config.GraphEnabled,config.GraphFps);uiTimer.Tick+=(s,e)=>Tick();uiTimer.Start();
         Log.Write("Start "+Diagnostics.OsVersion()+"; x64="+Environment.Is64BitProcess);
         openSettingsWhenReady=args.Length>0&&args[0]=="--settings";
@@ -97,9 +97,9 @@ internal sealed class MeterContext : ApplicationContext {
         }catch(Exception e){lock(gate){sampler.Reset();reading=new Reading{AdapterName=Ui.T("Ошибка чтения сети"),Error=e.Message};}Log.Write("Network: "+e.Message);}
         finally{Interlocked.Exchange(ref networkBusy,0);}
     }
-    void Layout(object state) {
+    void Layout(TaskbarAutomation automation) {
         if(stopped||Interlocked.Exchange(ref layoutBusy,1)!=0)return;
-        try{var p=TaskbarLayout.Inspect(config);string signal="safe="+p.Safe+", unavailable="+p.Unavailable+", shellPopup="+p.TransientShellUi;lock(gate)placement=placementTracker.Resolve(p,clock.Elapsed.TotalSeconds);if(signal!=lastLayoutSignal){lastLayoutSignal=signal;Log.Write("Layout provider: "+signal);}}
+        try{var p=TaskbarLayout.Inspect(config,automation);string signal="safe="+p.Safe+", unavailable="+p.Unavailable+", shellPopup="+p.TransientShellUi;lock(gate)placement=placementTracker.Resolve(p,clock.Elapsed.TotalSeconds);if(signal!=lastLayoutSignal){lastLayoutSignal=signal;Log.Write("Layout provider: "+signal);}}
         catch(Exception e){lock(gate){placementTracker.Reset();placement=new Placement{Status="Не удалось проверить расположение панели задач"};}Log.Write("Layout: "+e.Message);}
         finally{Interlocked.Exchange(ref layoutBusy,0);}
     }
@@ -146,7 +146,7 @@ internal sealed class MeterContext : ApplicationContext {
     }
     void BuildMenu() {
         menu.Items.Clear();
-        var info=MenuItem("NetSpeck 1.0.2","version");info.Enabled=false;menu.Items.Add(info);
+        var info=MenuItem("NetSpeck 1.0.3","version");info.Enabled=false;menu.Items.Add(info);
         Reading r;List<Adapter> list;lock(gate){r=reading;list=new List<Adapter>(adapters);}
         var statusItem=MenuItem(r.AdapterName,"status",false);statusItem.Enabled=false;menu.Items.Add(statusItem);
         menu.Items.Add(new ToolStripSeparator());
@@ -172,10 +172,10 @@ internal sealed class MeterContext : ApplicationContext {
     }
     static ToolStripMenuItem MenuItem(string text,string help,bool translate=true){var item=new ToolStripMenuItem(translate?Ui.T(text):text){Tag=text,AutoToolTip=false,ToolTipText=Ui.Help(help)};item.DropDown.ShowItemToolTips=true;return item;}
     void ChangeAdapter(string id){config.AdapterId=id;ResetSampling();Save();}
-    void Save(){try{if(savedAdapter!=config.AdapterId)ResetSampling();savedAdapter=config.AdapterId;config.Save();Ui.SetLanguage(config.Language);lock(gate)sampler.SetGraphSmoothing(config.GraphSmoothingSeconds);var nextIcon=AppIcons.Create(config.IconId,32);var previousIcon=tray.Icon;tray.Icon=nextIcon;if(previousIcon!=null)previousIcon.Dispose();menu.Font=AppFonts.Ui(config);needsRedraw=true;networkTimer.Change(0,GraphMath.PollInterval(config.GraphEnabled,config.Interval));uiTimer.Interval=GraphMath.FrameInterval(config.GraphEnabled,config.GraphFps);layoutTimer.Change(0,1000);if(dialog!=null&&!dialog.IsDisposed)dialog.SyncFromConfig();}catch(Exception e){MessageBox.Show(Ui.T("Не удалось сохранить настройки: ")+e.Message,"NetSpeck");}}
+    void Save(){try{if(savedAdapter!=config.AdapterId)ResetSampling();savedAdapter=config.AdapterId;config.Save();Ui.SetLanguage(config.Language);lock(gate)sampler.SetGraphSmoothing(config.GraphSmoothingSeconds);var nextIcon=AppIcons.Create(config.IconId,32);var previousIcon=tray.Icon;tray.Icon=nextIcon;if(previousIcon!=null)previousIcon.Dispose();menu.Font=AppFonts.Ui(config);needsRedraw=true;networkTimer.Change(0,GraphMath.PollInterval(config.GraphEnabled,config.Interval));uiTimer.Interval=GraphMath.FrameInterval(config.GraphEnabled,config.GraphFps);layoutWorker.Request();if(dialog!=null&&!dialog.IsDisposed)dialog.SyncFromConfig();}catch(Exception e){MessageBox.Show(Ui.T("Не удалось сохранить настройки: ")+e.Message,"NetSpeck");}}
     void ResizePanel(int dip,ResizePhase phase){
         if(stopped)return;
-        if(phase==ResizePhase.Cancel){resizedPlacement=null;needsRedraw=true;layoutTimer.Change(0,1000);return;}
+        if(phase==ResizePhase.Cancel){resizedPlacement=null;needsRedraw=true;layoutWorker.Request();return;}
         Placement current;lock(gate)current=placement;
         if(current==null||!current.Safe)return;
         resizedPlacement=current.WithExtent((int)Math.Round(dip*current.Dpi/96.0));needsRedraw=true;
@@ -197,9 +197,9 @@ internal sealed class MeterContext : ApplicationContext {
         }finally{if(old!=IntPtr.Zero)Native.SetThreadDpiAwarenessContext(old);}
     }
     public void ResetSampling(){lock(gate){sampler.Reset();}needsRedraw=true;}
-    public void Recreate(){lock(gate)placementTracker.Reset();resizedPlacement=null;if(meter!=null){meter.Dispose();meter=null;}needsRedraw=true;layoutTimer.Change(0,1000);ResetSampling();Log.Write("Recreate requested");}
+    public void Recreate(){lock(gate)placementTracker.Reset();resizedPlacement=null;if(meter!=null){meter.Dispose();meter=null;}needsRedraw=true;layoutWorker.Request();ResetSampling();Log.Write("Recreate requested");}
     public void RefreshTray(){tray.Visible=false;tray.Visible=true;}
-    public void Quit(){if(stopped)return;stopped=true;uiTimer.Stop();networkTimer.Dispose();layoutTimer.Dispose();if(dialog!=null)dialog.Close();if(meter!=null){meter.Dispose();meter=null;}tray.Visible=false;ExitThread();}
+    public void Quit(){if(stopped)return;stopped=true;uiTimer.Stop();networkTimer.Dispose();layoutWorker.Dispose();if(dialog!=null)dialog.Close();if(meter!=null){meter.Dispose();meter=null;}tray.Visible=false;ExitThread();}
     protected override void Dispose(bool disposing){if(disposing){Quit();uiTimer.Dispose();var icon=tray.Icon;tray.Dispose();if(icon!=null)icon.Dispose();menu.Dispose();controller.Dispose();}base.Dispose(disposing);}
 }
 internal static class Diagnostics {

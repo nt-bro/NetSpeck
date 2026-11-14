@@ -17,6 +17,20 @@ class BehaviorTests {
  // Exercise the real HWND and the same pointer handlers without taking global
  // mouse capture from the person using the desktop during automated checks.
  static void MouseMessage(MeterWindow meter,int message,int x){if(message==0x201)meter.BeginResize(x,false);else if(message==0x200)meter.MoveResize(x);else if(message==0x202)meter.EndResize();}
+ static void LayoutWorkerRegression(){
+   using(var ready=new AutoResetEvent(false)){
+     int calls=0,thread=0;bool correct=true;TaskbarAutomation first=null;
+     var worker=new LayoutWorker(automation=>{if(first==null){first=automation;thread=Thread.CurrentThread.ManagedThreadId;}correct&=Thread.CurrentThread.GetApartmentState()==ApartmentState.MTA&&!Thread.CurrentThread.IsThreadPoolThread&&thread==Thread.CurrentThread.ManagedThreadId&&Object.ReferenceEquals(first,automation);Interlocked.Increment(ref calls);ready.Set();});
+     try{
+       Check(ready.WaitOne(5000),"dedicated layout worker starts");
+       worker.Request();Check(ready.WaitOne(5000)&&calls>=2,"layout refresh request is processed");
+       Check(correct,"automation client stays on one windowless dedicated MTA thread");
+     }finally{worker.Dispose();}
+     for(int i=0;i<200&&worker.IsAlive;i++){Application.DoEvents();Thread.Sleep(10);}
+     Check(!worker.IsAlive,"layout worker releases its automation client and exits on disposal");
+     worker.Request();
+   }
+ }
  static Placement Snapshot(bool safe,bool unavailable,bool menu){return new Placement{Bar=new IntPtr(123),Rect=new Native.Rect{Left=0,Top=2088,Right=3840,Bottom=2160},Dpi=144,X=3254,Width=200,Height=72,MinimumWidth=120,MinimumX=2500,Safe=safe,Unavailable=unavailable,TransientShellUi=menu};}
  static void PlacementRegression(){
    var tracker=new PlacementTracker();var good=Snapshot(true,false,false);
@@ -69,6 +83,7 @@ class BehaviorTests {
    IntPtr bar=Native.FindWindow("Shell_TrayWnd",null);Native.SetThreadDpiAwarenessContext(Native.GetWindowDpiAwarenessContext(bar));
    Application.EnableVisualStyles();Application.SetCompatibleTextRenderingDefault(false);
    PlacementRegression();
+   LayoutWorkerRegression();
    context=new MeterContext(new string[0]);bool exited=false;context.ThreadExit+=(s,e)=>exited=true;
    ((Settings)Field(context,"config")).Language="ru";Call(context,"Save");
    Thread.Sleep(500);Application.DoEvents();
